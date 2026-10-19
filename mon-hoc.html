@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Chọn môn – Ngã Rẽ 10</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"><link rel="stylesheet" href="assets/css/style.css"></head><body data-p="subjects"><main><h2>Xếp thử 4 môn lựa chọn</h2><p class="soft">Ngoài 8 môn và hoạt động bắt buộc (có Lịch sử), bạn chọn 4 trong 9 môn dưới đây, kèm 3 cụm chuyên đề học tập. Chọn đúng 4 môn để xem nghề nào hợp.</p>
+<div class="opts" id="pick" style="margin:14px 0"></div><p class="msg" id="msg" role="status"></p><div id="out"></div>
+<div class="note">Mỗi trường chỉ mở một số tổ hợp nhất định. Hãy xem phương án tổ hợp của trường bạn định thi vào.</div>
+</main><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
+$("#pick").innerHTML=SUBL.map(s=>`<label class="opt sub"><input type="checkbox" value="${s}"><span>${s}</span></label>`).join("");
+const pre=+new URLSearchParams(location.search).get("nghe");if(C[pre]&&new URLSearchParams(location.search).has("nghe"))C[pre][3].split("|").forEach(m=>{const x=$(`#pick input[value="${m}"]`);if(x)x.checked=true});
+function go2(){const s=$$("#pick input:checked").map(x=>x.value);$("#msg").textContent=s.length<4?`Bạn đã chọn ${s.length}/4 môn.`:"Đã đủ 4 môn.";
+ if(s.length<4){$("#out").innerHTML="";return}
+ const r=C.map((c,i)=>({i,c,h:c[3].split("|").filter(x=>s.includes(x)).length})).sort((a,b)=>b.h-a.h).slice(0,5);
+ $("#out").innerHTML=`<p><b>Tổ hợp của bạn:</b> Lịch sử (bắt buộc) + ${chips(s,s)}</p><h3 style="margin-top:18px">Nghề hợp nhất với tổ hợp này</h3>${r.map(t=>`<details class="card" style="margin:10px 0"><summary>${t.c[0]}<small>Trùng ${t.h}/4 môn. ${G[t.c[1]]}</small></summary><div class="in">${careerBody(t.i,s)}</div></details>`).join("")}`}
+$("#pick").onchange=e=>{if($$("#pick input:checked").length>4){e.target.checked=false;go2();$("#msg").textContent="Chỉ chọn đúng 4 môn. Hãy bỏ một môn trước.";return}go2()};go2();
+</script></body></html>

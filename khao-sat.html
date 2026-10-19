@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Khảo sát – Ngã Rẽ 10</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"><link rel="stylesheet" href="assets/css/style.css"></head><body data-p="survey"><main><h2>Khảo sát hướng đi</h2><div id="form"><p class="soft">Phần 1. Mỗi câu, chọn mức đúng nhất với bạn.</p><div id="qs"></div><p class="soft" style="margin-top:22px">Phần 2. Chọn tối đa 3 môn bạn học tốt hoặc thấy hứng thú nhất.</p><div class="opts" id="subs" style="margin-top:8px"></div><p class="msg" id="msg" role="alert"></p><button class="btn" id="go">Xem gợi ý của mình</button></div><div id="result" hidden></div>
+</main><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
+$("#qs").innerHTML=Q.map((q,i)=>`<fieldset class="card q"><legend style="position:absolute;left:-9999px">Câu ${i+1}</legend><p>${q[1]}</p><div class="opts">${LV.map((l,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"><span>${l}</span></label>`).join("")}</div></fieldset>`).join("");
+$("#subs").innerHTML=SUB.map(s=>`<label class="opt sub"><input type="checkbox" value="${s}"><span>${s}</span></label>`).join("");
+$("#subs").onchange=e=>{if($$("#subs input:checked").length>3){e.target.checked=false;$("#msg").textContent="Chỉ chọn tối đa 3 môn để gợi ý rõ hơn."}else $("#msg").textContent=""};
+$("#go").onclick=()=>{const a=Q.map((_,i)=>{const r=$(`input[name=q${i}]:checked`);return r?+r.value:null});
+ if(a.includes(null)){$("#msg").textContent=`Bạn còn ${a.filter(x=>x===null).length} câu chưa trả lời ở Phần 1.`;return}
+ const s=$$("#subs input:checked").map(x=>x.value);if(!s.length){$("#msg").textContent="Hãy chọn ít nhất 1 môn ở Phần 2.";return}
+ const d={a,s};store.set(KEY,d);res(d)};
+function res(d){const{gs,list}=calc(d);$("#form").hidden=true;$("#result").hidden=false;
+ $("#result").innerHTML=`<p class="soft">Đây là gợi ý để tham khảo. Bạn hoàn toàn có thể chọn khác.</p><div class="card" style="margin:14px 0 24px"><h3>Nhóm nghề bạn nghiêng về</h3>${Object.entries(gs).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div>${G[k]}<div class="bar"><b style="width:${v/4*100}%"></b></div></div>`).join("")}</div>
+ ${list.slice(0,3).map((t,n)=>`<div class="card" style="margin:18px 0"><div class="rank"><span class="no">${n+1}</span><div><h3 style="margin:0">${t.c[0]}</h3><span class="soft" style="font-size:14px">${G[t.c[1]]}. Mức hợp ${t.pct}%</span></div></div>${careerBody(t.i,d.s)}</div>`).join("")}
+ <div class="row"><a class="btn" href="so-sanh.html">Sang bước So sánh</a><button class="btn alt" id="redo">Làm lại khảo sát</button></div>`;
+ $("#redo").onclick=()=>{store.set(KEY,null);$$("#form input").forEach(i=>i.checked=false);$("#result").hidden=true;$("#form").hidden=false;scrollTo(0,0)}}
+const sv=store.get(KEY,null);if(sv&&sv.a)res(sv);
+</script></body></html>
