@@ -30,4 +30,11 @@ Lưu ý: nếu thay đổi số câu hỏi khảo sát, học sinh đã làm kh�
 Đẩy toàn bộ thư mục lên repo, vào Settings > Pages, chọn nhánh main, thư mục root.
 
 ## Trợ lý AI
-Đặt `AI.ENDPOINT` trong `assets/js/app.js` là địa chỉ proxy (ví dụ Firebase Cloud Function) nhận `{model, messages}` và trả về dạng chat/completions. Không đặt khóa API trực tiếp trong file JS vì ai cũng đọc được.
+Chatbot (nút tròn góc phải) gọi API chuẩn OpenAI-compatible giống chatbot AI SMART: `POST {ENDPOINT}/chat/completions`. Cấu hình ở đối tượng `AI` đầu file `assets/js/app.js` (`ENDPOINT`, `MODEL`, `KEY`, `SYSTEM`).
+
+- Mở chatbot sẽ làm mờ nền phía sau; bấm vào nền, nhấn Esc hoặc nút × để đóng. Nút xoay tròn để bắt đầu cuộc trò chuyện mới.
+- Lịch sử 20 tin gần nhất lưu trong localStorage của máy học sinh, nên chuyển trang vẫn giữ cuộc trò chuyện.
+- Mỗi lần gửi, trợ lý được cấp thêm danh sách nghề của website và kết quả khảo sát gần nhất của học sinh (nếu có) để câu trả lời khớp với nội dung trên trang.
+- Câu trả lời hiển thị Markdown (marked + DOMPurify, tải từ CDN khi cần).
+
+**Bảo mật:** khóa đặt trong file JS thì ai mở trang cũng đọc được và có thể dùng hết hạn mức. Nên để `KEY` rỗng và trỏ `ENDPOINT` tới proxy riêng (ví dụ Firebase Cloud Function giữ khóa phía máy chủ, nhận `{model, messages}` và trả về dạng chat/completions), hoặc ít nhất đặt hạn mức chi tiêu thấp cho khóa này.

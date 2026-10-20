@@ -2,8 +2,23 @@
 const KEY="ngare10_v1",CMP="ngare10_cmp",PLAN="ngare10_plan";
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const store={get(k,d){try{const r=localStorage.getItem(k);return r==null?d:JSON.parse(r)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-// Trợ lý AI: đặt ENDPOINT là địa chỉ proxy của bạn (không đặt khóa API trong file này). Xem README.
-const AI={ENDPOINT:"",MODEL:"",SYSTEM:"Bạn là trợ lý hướng nghiệp thân thiện cho học sinh lớp 9 đang chọn môn lớp 10. Trả lời ngắn, dễ hiểu bằng tiếng Việt. Không quyết định thay học sinh; gợi mở, nêu ưu và nhược điểm. Với thông tin tuyển sinh cụ thể, nhắc học sinh kiểm tra thông báo mới nhất của trường."};
+// Trợ lý AI: gọi API chuẩn OpenAI-compatible (POST {ENDPOINT}/chat/completions) giống chatbot AI SMART.
+// Lưu ý: khóa API đặt ở đây ai cũng đọc được. Muốn an toàn hơn, để KEY rỗng và trỏ ENDPOINT tới proxy của bạn
+// (ví dụ Firebase Cloud Function giữ khóa ở phía máy chủ). Xem README.
+const AI={
+  ENDPOINT:"https://api.shopaikey.com/v1",
+  MODEL:"gpt-4.1-mini-2025-04-14",
+  KEY:"sk-4150297863e3eee405805e8609648e6c5cebb1b502ffb46e",
+  MAX_TOKENS:1500,
+  KEEP:20, // số tin nhắn gần nhất được lưu và gửi kèm
+  SYSTEM:`Bạn là trợ lý hướng nghiệp thân thiện của website "Ngã Rẽ 10", giúp học sinh lớp 9 chọn môn lựa chọn lớp 10.
+QUY TẮC:
+- Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu, giọng thân thiện phù hợp học sinh.
+- Không quyết định thay học sinh: gợi mở, nêu ưu và nhược điểm, hỏi lại sở thích và môn học em mạnh khi cần.
+- Với thông tin tuyển sinh cụ thể (điểm chuẩn, chỉ tiêu, tổ hợp môn của từng trường), nhắc học sinh kiểm tra thông báo mới nhất của trường và hỏi thầy cô.
+- Nếu câu hỏi không liên quan đến chọn môn, nghề nghiệp, học tập thì từ chối nhẹ nhàng và đưa cuộc trò chuyện về chủ đề chính.
+- Dùng Markdown đơn giản: **in đậm** ý chính, danh sách gạch đầu dòng khi liệt kê. Không dùng bảng phức tạp.`
+};
 const NAV=[["index.html","Trang chủ","home","house"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
 
 const cix=id=>C.findIndex(c=>c[6]===id),cid=i=>C[i][6];
@@ -50,16 +65,70 @@ $("#share").onclick=()=>{
 };
 
 // Trợ lý AI
-let hist=[{role:"system",content:AI.SYSTEM}];
-$("#chat-fab").onclick=()=>{
-  if($("#chat"))return;$("#chat-fab").hidden=true;
-  document.body.insertAdjacentHTML("beforeend",`<div class="card" id="chat" role="dialog" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><button aria-label="Đóng" id="cx">×</button></div><div id="cb"><div class="m b">Chào bạn! Bạn đang băn khoăn điều gì về việc chọn môn lớp 10?</div></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
-  const add=(t,c)=>{const m=document.createElement("div");m.className="m "+c;m.textContent=t;$("#cb").appendChild(m);$("#cb").scrollTop=1e9;return m};
-  $("#cx").onclick=()=>{$("#chat").remove();$("#chat-fab").hidden=false};$("#ci").focus();
-  $("#cf").onsubmit=async e=>{e.preventDefault();const t=$("#ci").value.trim();if(!t)return;$("#ci").value="";add(t,"u");
-    if(!AI.ENDPOINT){add("Trợ lý AI chưa được bật trên trang này. Trong lúc chờ, bạn có thể làm khảo sát hoặc xem mục Chọn môn để có gợi ý.","b");return}
-    hist.push({role:"user",content:t});const w=add("Đang trả lời…","b");
-    try{const r=await fetch(AI.ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:AI.MODEL,messages:hist,temperature:.6})});
-      if(!r.ok)throw new Error(r.status);const j=await r.json(),a=j?.choices?.[0]?.message?.content?.trim();if(!a)throw new Error("rỗng");w.textContent=a;hist.push({role:"assistant",content:a})}
-    catch(err){w.textContent="Trợ lý đang gặp sự cố kết nối ("+err.message+"). Bạn thử lại sau hoặc hỏi thầy cô nhé.";hist.pop()}};
-};
+const CHAT_KEY="ngare10_chat";
+let hist=(()=>{const h=store.get(CHAT_KEY,[]);return Array.isArray(h)?h.filter(m=>m&&(m.role==="user"||m.role==="assistant")&&typeof m.content==="string").slice(-AI.KEEP):[]})();
+const saveHist=()=>store.set(CHAT_KEY,hist.slice(-AI.KEEP));
+// Ngữ cảnh lấy từ nội dung của chính website (nghề, nhóm nghề, kết quả khảo sát của học sinh) để câu trả lời khớp với trang
+function aiContext(){
+  try{
+    let t="";
+    if(Array.isArray(C)&&C.length){
+      t+="\n\nDANH SÁCH NGHỀ TRÊN WEBSITE (tên | nhóm | 4 môn lựa chọn gợi ý | ngành học | khối thi):\n"+C.map(c=>`- ${c[0]} | ${G[c[1]]||c[1]} | ${c[3].split("|").join(", ")} | ${c[4]} | ${c[5]}`).join("\n");
+    }
+    const d=store.get(KEY,null);
+    if(d&&d.a&&d.s&&Array.isArray(C)&&C.length){
+      const top=calc(d).list.slice(0,3).map(x=>`${x.c[0]} (${x.pct}%)`).join("; ");
+      t+=`\n\nKẾT QUẢ KHẢO SÁT CỦA HỌC SINH NÀY: nhóm nghề phù hợp nhất: ${top}. Môn các em tự thấy mạnh: ${d.s.join(", ")||"chưa chọn"}. Chỉ nhắc tới khi liên quan đến câu hỏi.`;
+    }
+    return t;
+  }catch(e){return""}
+}
+// Gọi API giống callAiApi của AI SMART: POST {endpoint}/chat/completions, trả về choices[0].message.content
+async function callAi(messages){
+  const url=AI.ENDPOINT.trim().replace(/\/$/,"")+"/chat/completions";
+  const headers={"Content-Type":"application/json"};
+  if(AI.KEY)headers.Authorization="Bearer "+AI.KEY;
+  const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),60000);
+  try{
+    const r=await fetch(url,{method:"POST",headers,signal:ctl.signal,body:JSON.stringify({model:AI.MODEL,messages,max_tokens:AI.MAX_TOKENS,temperature:.6})});
+    if(!r.ok){const e=await r.text().catch(()=>"");throw new Error("HTTP "+r.status+(e?": "+e.slice(0,120):""))}
+    const j=await r.json();return(j?.choices?.[0]?.message?.content||"").trim();
+  }catch(e){throw e.name==="AbortError"?new Error("quá thời gian chờ"):e}
+  finally{clearTimeout(to)}
+}
+// Hiển thị Markdown (marked + DOMPurify như AI SMART), tải khi cần; nếu tải lỗi thì hiện chữ thường
+let mdP=null;
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function loadMd(){return mdP||(mdP=Promise.all([loadScript("https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"),loadScript("https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js")]).catch(()=>{}))}
+function renderBot(el,t){
+  el.textContent=t;
+  loadMd().then(()=>{if(window.marked&&window.DOMPurify){el.innerHTML=DOMPurify.sanitize(marked.parse(t,{breaks:true}));el.classList.add("md");$$("a",el).forEach(a=>{a.target="_blank";a.rel="noopener noreferrer"})}const b=$("#cb");if(b)b.scrollTop=1e9});
+}
+
+const GREET="Chào bạn! Bạn đang băn khoăn điều gì về việc chọn môn lớp 10?";
+function closeChat(){$("#chat")?.remove();$("#chat-bd")?.remove();document.body.classList.remove("chat-open");const f=$("#chat-fab");f.hidden=false;f.focus()}
+function openChat(){
+  if($("#chat"))return;$("#chat-fab").hidden=true;document.body.classList.add("chat-open");
+  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button aria-label="Xóa cuộc trò chuyện" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
+  const add=(t,c)=>{const m=document.createElement("div");m.className="m "+c;if(c==="b")renderBot(m,t);else m.textContent=t;$("#cb").appendChild(m);$("#cb").scrollTop=1e9;return m};
+  const draw=()=>{$("#cb").innerHTML="";add(GREET,"b");hist.forEach(m=>add(m.content,m.role==="user"?"u":"b"))};
+  draw();
+  $("#chat-bd").onclick=closeChat;$("#cx").onclick=closeChat;
+  $("#cn").onclick=()=>{hist=[];saveHist();draw();$("#ci").focus()};
+  $("#chat").addEventListener("keydown",e=>{if(e.key==="Escape"){e.stopPropagation();closeChat()}});
+  $("#ci").focus();
+  $("#cf").onsubmit=async e=>{
+    e.preventDefault();const t=$("#ci").value.trim();if(!t||$("#cs").disabled)return;
+    $("#ci").value="";add(t,"u");hist.push({role:"user",content:t});
+    $("#cs").disabled=true;const w=add("Đang trả lời…","b");w.classList.add("wait");
+    try{
+      const a=await callAi([{role:"system",content:AI.SYSTEM+aiContext()},...hist.slice(-AI.KEEP)]);
+      if(!a)throw new Error("không có nội dung trả về");
+      w.classList.remove("wait");renderBot(w,a);hist.push({role:"assistant",content:a});saveHist();
+    }catch(err){
+      hist.pop();w.classList.remove("wait");w.classList.add("err");
+      w.textContent="Trợ lý đang gặp sự cố kết nối ("+err.message+"). Bạn thử lại sau hoặc hỏi thầy cô nhé.";
+    }finally{const b=$("#cs");if(b){b.disabled=false;$("#ci")?.focus()}}
+  };
+}
+$("#chat-fab").onclick=openChat;
