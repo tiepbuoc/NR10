@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Nội dung website (nghề, câu hỏi, môn học): ai cũng đọc được, chỉ quản trị viên được sửa.
+    // Thay email bên dưới bằng email tài khoản quản trị bạn tạo trong Authentication.
+    match /site/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email in ['THAY_BANG_EMAIL_QUAN_TRI@gmail.com'];
+    }
+    // Mọi đường dẫn khác bị chặn
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

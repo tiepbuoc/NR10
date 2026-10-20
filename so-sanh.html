@@ -1,20 +1,20 @@
-<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>So sánh – Ngã Rẽ 10</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"></head><body data-p="compare"><main><h2>So sánh tối đa 3 nghề</h2>
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>So sánh – Ngã Rẽ 10</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"></head><body data-p="compare"><main><h2>So sánh tối đa 3 nghề</h2>
 <p class="soft">Chấm từng tiêu chí từ 1 đến 5 và chọn mức quan trọng của tiêu chí đó với bạn. Điểm tổng được tính theo mức quan trọng.</p>
-<div id="box"></div></main><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
+<div id="box"></div></main><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><script src="assets/js/firebase-config.js"></script><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>onData(()=>{
 const CR=[["hu","Mình hứng thú"],["mo","Hợp môn mình học tốt"],["gd","Gia đình ủng hộ, điều kiện phù hợp"],["vl","Cơ hội việc làm"]];
 const RK="ngare10_rate";
 function sel(v,id,k){return `<select data-r="${id}" data-k="${k}" aria-label="${k}">${[1,2,3,4,5].map(n=>`<option ${n===v?"selected":""}>${n}</option>`).join("")}</select>`}
-function draw(){const l=store.get(CMP,[]),R=store.get(RK,{w:{},r:{}});
+function draw(){const l=store.get(CMP,[]).map(cix).filter(i=>i>=0),R=store.get(RK,{w:{},r:{}});
  if(!l.length){$("#box").innerHTML=`<div class="card"><p>Bạn chưa chọn nghề nào để so sánh.</p><a class="btn" href="nghe-nghiep.html">Chọn nghề</a></div>`;return}
- const w=k=>R.w[k]||3,rt=(i,k)=>(R.r[i]||{})[k]||3;
+ const w=k=>R.w[k]||3,rt=(i,k)=>(R.r[cid(i)]||{})[k]||3;
  const tot=l.map(i=>{let s=0,t=0;CR.forEach(c=>{s+=w(c[0])*rt(i,c[0]);t+=w(c[0])*5});return Math.round(s/t*100)});const best=Math.max(...tot);
  $("#box").innerHTML=`<div class="tw"><table><thead><tr><th>Tiêu chí</th><th>Mức quan trọng</th>${l.map(i=>`<th>${C[i][0]}<br><button class="btn alt sm" data-cmp="${i}" style="box-shadow:none">Bỏ khỏi so sánh</button></th>`).join("")}</tr></thead><tbody>
- ${CR.map(c=>`<tr><td>${c[1]}</td><td>${sel(w(c[0]),"w",c[0])}</td>${l.map(i=>`<td>${sel(rt(i,c[0]),i,c[0])}</td>`).join("")}</tr>`).join("")}
+ ${CR.map(c=>`<tr><td>${c[1]}</td><td>${sel(w(c[0]),"w",c[0])}</td>${l.map(i=>`<td>${sel(rt(i,c[0]),cid(i),c[0])}</td>`).join("")}</tr>`).join("")}
  <tr><th colspan="2">Điểm tổng (trên 100)</th>${tot.map(t=>`<th>${t}${t===best&&l.length>1?" (cao nhất)":""}</th>`).join("")}</tr>
  <tr><td colspan="2">Tổ hợp gợi ý</td>${l.map(i=>`<td>${chips(C[i][3].split("|"))}</td>`).join("")}</tr></tbody></table></div>
  <div class="row"><button class="btn" id="tp"><i class="fas fa-flag-checkered ic"></i>Đưa nghề cao điểm nhất vào kế hoạch</button><a class="btn alt" href="ke-hoach.html">Sang Kế hoạch</a></div>`;
- $("#tp").onclick=()=>{const p=store.get(PLAN,{});p.main=l[tot.indexOf(best)];store.set(PLAN,p);toast("Đã đặt làm phương án chính")}}
+ $("#tp").onclick=()=>{const p=store.get(PLAN,{});p.main=cid(l[tot.indexOf(best)]);store.set(PLAN,p);toast("Đã đặt làm phương án chính")}}
 $("#box").addEventListener("change",e=>{const k=e.target.dataset.k;if(!k)return;const R=store.get(RK,{w:{},r:{}}),id=e.target.dataset.r,v=+e.target.value;
  if(id==="w")R.w[k]=v;else(R.r[id]=R.r[id]||{})[k]=v;store.set(RK,R);draw()});
 window.onCmpChange=draw;draw();
-</script></body></html>
+});</script></body></html>

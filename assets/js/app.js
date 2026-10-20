@@ -5,25 +5,26 @@ const store={get(k,d){try{const r=localStorage.getItem(k);return r==null?d:JSON.
 // Trợ lý AI: đặt ENDPOINT là địa chỉ proxy của bạn (không đặt khóa API trong file này). Xem README.
 const AI={ENDPOINT:"",MODEL:"",SYSTEM:"Bạn là trợ lý hướng nghiệp thân thiện cho học sinh lớp 9 đang chọn môn lớp 10. Trả lời ngắn, dễ hiểu bằng tiếng Việt. Không quyết định thay học sinh; gợi mở, nêu ưu và nhược điểm. Với thông tin tuyển sinh cụ thể, nhắc học sinh kiểm tra thông báo mới nhất của trường."};
 const NAV=[["index.html","Trang chủ","home","house"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
-const GI={K:"microchip",T:"flask",N:"palette",X:"people-group",D:"chart-line",Q:"landmark"};
 
+const cix=id=>C.findIndex(c=>c[6]===id),cid=i=>C[i][6];
 function calc(d){
-  const gs={K:0,T:0,N:0,X:0,D:0,Q:0};Q.forEach((q,i)=>gs[q[1]]+=d.a[i]);
+  const gs={};Object.keys(G).forEach(k=>gs[k]=0);Q.forEach((q,i)=>{if(q[0] in gs)gs[q[0]]+=(d.a[i]||0)});
+  const mx=Math.max(2,...Object.keys(G).map(k=>Q.filter(q=>q[0]===k).length*2));
   const bo={};d.s.forEach(x=>(BOOST[x]||"").split("").forEach(g=>bo[g]=1));
-  const list=C.map((c,i)=>{const m=c[3].split("|"),h=m.filter(x=>d.s.includes(x)).length,sc=gs[c[1]]*2+h*1.5+(bo[c[1]]?1:0);return{i,c,m,pct:Math.min(99,Math.round(sc/13.5*100)),sc}}).sort((a,b)=>b.sc-a.sc);
-  return{gs,list};
+  const list=C.map((c,i)=>{const m=c[3].split("|"),h=m.filter(x=>d.s.includes(x)).length,sc=gs[c[1]]*2+h*1.5+(bo[c[1]]?1:0);return{i,c,m,pct:Math.min(99,Math.round(sc/(mx*2+5.5)*100)),sc}}).sort((a,b)=>b.sc-a.sc);
+  return{gs,list,mx};
 }
 const chips=(m,s=[])=>m.map(x=>`<span class="chip ${s.includes(x)?"pick":""}">${x}</span>`).join("");
-const inCmp=i=>store.get(CMP,[]).includes(i);
-function careerBody(i,s=[]){const c=C[i];return `<p>${c[2]}</p><p style="margin-bottom:2px"><b>Môn lựa chọn gợi ý:</b></p>${chips(c[3].split("|"),s)}<p><b>Ngành học:</b> ${c[4]}<br><b>Khối thi tham khảo:</b> ${c[5]}</p><div class="row" style="margin:8px 0 0"><button class="btn alt sm" data-cmp="${i}">${inCmp(i)?"Bỏ khỏi so sánh":"Thêm vào so sánh"}</button><a class="btn alt sm" href="mon-hoc.html?nghe=${i}"><i class="fas fa-book-open ic"></i>Xem tổ hợp</a></div>`}
+const inCmp=i=>store.get(CMP,[]).includes(cid(i));
+function careerBody(i,s=[]){const c=C[i];return `<p>${c[2]}</p><p style="margin-bottom:2px"><b>Môn lựa chọn gợi ý:</b></p>${chips(c[3].split("|"),s)}<p><b>Ngành học:</b> ${c[4]}<br><b>Khối thi tham khảo:</b> ${c[5]}</p><div class="row" style="margin:8px 0 0"><button class="btn alt sm" data-cmp="${i}">${inCmp(i)?"Bỏ khỏi so sánh":"Thêm vào so sánh"}</button><a class="btn alt sm" href="mon-hoc.html?nghe=${encodeURIComponent(c[6])}"><i class="fas fa-book-open ic"></i>Xem tổ hợp</a></div>`}
 function toast(t){let e=$(".toast");if(e)e.remove();e=document.createElement("div");e.className="toast";e.setAttribute("role","status");e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-cmp]");if(!b)return;
-  const i=+b.dataset.cmp;let l=store.get(CMP,[]);
-  if(l.includes(i)){l=l.filter(x=>x!==i);toast("Đã bỏ khỏi danh sách so sánh")}
+  const i=+b.dataset.cmp,id=cid(i);let l=store.get(CMP,[]).filter(x=>cix(x)>=0);
+  if(l.includes(id)){l=l.filter(x=>x!==id);toast("Đã bỏ khỏi danh sách so sánh")}
   else if(l.length>=3){toast("Chỉ so sánh tối đa 3 nghề. Hãy bỏ bớt một nghề trước.");return}
-  else{l.push(i);toast("Đã thêm vào so sánh ("+l.length+"/3)")}
-  store.set(CMP,l);$$(`[data-cmp="${i}"]`).forEach(x=>x.textContent=l.includes(i)?"Bỏ khỏi so sánh":"Thêm vào so sánh");
+  else{l.push(id);toast("Đã thêm vào so sánh ("+l.length+"/3)")}
+  store.set(CMP,l);$$(`[data-cmp="${i}"]`).forEach(x=>x.textContent=l.includes(id)?"Bỏ khỏi so sánh":"Thêm vào so sánh");
   if(window.onCmpChange)onCmpChange();
 });
 
@@ -34,7 +35,7 @@ document.body.insertAdjacentHTML("beforeend",`<footer><p>Ngã Rẽ 10 là công 
 
 // Popup chi tiết
 function pop(h){let d=$("#pop");if(!d){document.body.insertAdjacentHTML("beforeend",`<dialog id="pop"><button class="px" aria-label="Đóng"><i class="fas fa-xmark"></i></button><div id="pb"></div></dialog>`);d=$("#pop");$(".px",d).onclick=()=>d.close();d.addEventListener("click",e=>{if(e.target===d)d.close()})}$("#pb").innerHTML=h;$("#pb").scrollTop=0;d.showModal()}
-function careerPop(i,s=[]){const c=C[i];pop(`<h3 class="pt"><i class="fas fa-${GI[c[1]]} ic"></i>${c[0]}</h3><p class="soft" style="font-size:14px;margin:0 0 6px">${G[c[1]]}</p>${careerBody(i,s)}`)}
+function careerPop(i,s=[]){const c=C[i];pop(`<h3 class="pt"><span class="ib" style="--gc:${GC[c[1]]};margin-right:10px;vertical-align:middle"><i class="fas fa-${GI[c[1]]}"></i></span>${c[0]}</h3><p class="soft" style="font-size:14px;margin:0 0 6px">${G[c[1]]}</p>${careerBody(i,s)}`)}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-pop]");if(b)careerPop(+b.dataset.pop,(b.dataset.s||"").split("|").filter(Boolean))});
 // Ẩn hiện menu trên điện thoại
 function setNav(off){document.body.classList.toggle("nav-off",off);const b=$("#navtg");b.setAttribute("aria-expanded",String(!off));b.setAttribute("aria-label",off?"Hiện menu":"Ẩn menu");b.innerHTML=`<i class="fas fa-${off?"bars":"chevron-down"}"></i>`;store.set("ngare10_navoff",off)}
