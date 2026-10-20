@@ -31,7 +31,7 @@ QUY TẮC:
 - Câu hỏi ngoài chủ đề hướng nghiệp, học tập: từ chối nhẹ nhàng và đưa về chủ đề chính.
 - Dùng Markdown đơn giản: **in đậm** ý chính, danh sách gạch đầu dòng. Không dùng bảng phức tạp.`
 };
-const NAV=[["index.html","Trang chủ","home","house"],["con-duong.html","Con đường","paths","signs-post"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
+const NAV=[["con-duong.html","Con đường","paths","signs-post"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
 
 // Bốn con đường sau lớp 9 (nội dung tham khảo chung; chi tiết từng trường cần hỏi trực tiếp nhà trường)
 const PK="ngare10_profile";
@@ -114,7 +114,11 @@ let hist=(()=>{const h=store.get(CHAT_KEY,[]);return Array.isArray(h)?h.filter(m
 const saveHist=()=>store.set(CHAT_KEY,hist.slice(-AI.KEEP));
 const PF=[["gt","Giới tính",["Nam","Nữ","Không muốn nói"]],["tuoi","Tuổi",["14","15","16","17 trở lên"]],["vung","Vùng em sống",["Miền núi","Trung du","Đồng bằng","Thành phố"]],["noi","Nơi ở",["Xã","Thị trấn / huyện","Phường / thành phố"]],["dd","Dự định sau lớp 9",["Học tiếp THPT","Học nghề (trung cấp, cao đẳng nghề)","Học GDTX","Học nghề dịch vụ, đi làm sớm","Chưa biết"]],["hn","Em quan tâm",["Nghề thủ công","Nghề dịch vụ","Kỹ thuật cao","Chưa rõ"]]];
 const profile=()=>{const p=store.get(PK,{});return p&&typeof p==="object"?p:{}};
-function profText(){const p=profile(),l=PF.filter(f=>p[f[0]]).map(f=>`${f[1]}: ${p[f[0]]}`);return l.length?"\n\nHỒ SƠ HỌC SINH (do em tự điền): "+l.join("; ")+".":""}
+const DDMAP={thpt:"Học tiếp THPT",cdn:"Học nghề (trung cấp, cao đẳng nghề)",gdtx:"Học GDTX",nghe:"Học nghề dịch vụ, đi làm sớm"};
+const REG={"Miền núi":["Nông lâm nghiệp, chăn nuôi","Du lịch cộng đồng, homestay","Nghề thủ công truyền thống (dệt, thêu, mây tre)","Điện, sửa chữa máy nông nghiệp"],"Trung du":["Cây công nghiệp, chế biến nông sản","Công nhân kỹ thuật ở khu công nghiệp","Cơ khí, sửa chữa","Trồng trọt, chăn nuôi ứng dụng công nghệ"],"Đồng bằng":["Cơ khí, điện - điện tử","Chế biến thực phẩm","Làng nghề (gốm, mộc, đúc...)","Bán hàng, logistics"],"Thành phố":["Nhà hàng, khách sạn, du lịch","Công nghệ thông tin, thiết kế","Kỹ thuật cao, tự động hóa","Làm đẹp, bán lẻ, dịch vụ"]};
+function setProf(o){const p=profile();Object.assign(p,o);store.set(PK,p)}
+function profText(){const p=profile(),l=PF.filter(f=>p[f[0]]).map(f=>`${f[1]}: ${p[f[0]]}`);let pg="";if(/con-duong/.test(location.pathname)){const k=new URLSearchParams(location.search).get("p"),x=PATHS.find(y=>y.k===k);if(x)pg="\n\nEm đang xem trang con đường: "+x.n+"."}
+  return(l.length?"\n\nHỒ SƠ HỌC SINH (do em tự điền): "+l.join("; ")+".":"")+pg}
 // Ngữ cảnh lấy từ nội dung của chính website (nghề, nhóm nghề, kết quả khảo sát của học sinh) để câu trả lời khớp với trang
 function aiContext(){
   try{

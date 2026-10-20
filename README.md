@@ -32,6 +32,7 @@ Lưu ý: nếu thay đổi số câu hỏi khảo sát, học sinh đã làm kh�
 ## Cấu trúc không gian
 - Trang chủ: 4 con đường sau lớp 9 (Học tiếp THPT, Trung cấp/cao đẳng nghề, Học GDTX, Học nghề dịch vụ) và nút Hỏi trợ lý AI.
 - `con-duong.html?p=thpt|cdn|gdtx|nghe`: trang chi tiết từng con đường. Nội dung nằm trong mảng `PATHS` ở `assets/js/app.js`, sửa ở đó là cập nhật cả trang.
+- Trang con đường còn có: trắc nghiệm nhanh gợi ý con đường (tự điền hồ sơ chatbot), nghề gợi ý theo vùng (`REG` trong app.js), kế hoạch tick từng bước (lưu trong máy). Xem con đường nào thì "Dự định sau lớp 9" trong hồ sơ cập nhật theo, và chatbot biết em đang xem trang nào.
 - Khảo sát, Nghề, Chọn môn, So sánh, Kế hoạch giữ nguyên, dành cho em chọn học THPT.
 
 ## Trợ lý AI

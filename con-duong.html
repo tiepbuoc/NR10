@@ -1,14 +1,51 @@
-<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Ngã Rẽ 10 – Bốn con đường sau lớp 9</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/ui.css"></head><body data-p="paths"><main><h1 style="margin-bottom:6px">4 con đường sau lớp 9</h1><p class="soft">Chọn một không gian để xem em hợp với đâu, cần chuẩn bị gì, rồi hỏi trợ lý AI.</p>
-<div class="tiles" id="ptabs"></div><div class="card" id="pd"></div></main><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><script src="assets/js/firebase-config.js"></script><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
-const pq=new URLSearchParams(location.search).get("p"),pa=PATHS.find(x=>x.k===pq)||PATHS[0];
-const ul=a=>"<ul class='pl'>"+a.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Ngã Rẽ 10 – Bốn con đường sau lớp 9</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/ui.css"></head><body data-p="paths"><main><h1 style="margin-bottom:6px">4 con đường <span class="grad">sau lớp 9</span></h1><p class="soft">Chọn một không gian để xem em hợp với đâu, rồi hỏi trợ lý AI.</p>
+<details class="card qz" id="qz"><summary><i class="fas fa-wand-magic-sparkles"></i> Chưa biết chọn đường nào? Làm trắc nghiệm nhanh</summary><div id="qzb"></div></details>
+<div class="tiles two" id="ptabs"></div><div id="pd"></div></main><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><script src="assets/js/firebase-config.js"></script><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>(()=>{
+const pq=new URLSearchParams(location.search).get("p"),pa=PATHS.find(x=>x.k===pq)||PATHS[0],GC={g:"#12B886",y:"#F59F00",v:"#7950F2"};
+const QZ=[["Em thích học theo cách nào?",[["Học văn hóa, ôn thi",{thpt:2}],["Thực hành, làm ra sản phẩm",{cdn:2}],["Học linh hoạt, vừa học vừa làm",{gdtx:2}],["Học việc ngay ở cơ sở",{nghe:2}]]],
+["Sau này em muốn",[["Vào đại học, cao đẳng",{thpt:2}],["Có nghề vững, ra trường sớm",{cdn:2}],["Có bằng THPT, giờ học linh hoạt",{gdtx:2}],["Tự lập, có thu nhập sớm",{nghe:2}]]],
+["Hoàn cảnh gia đình em",[["Gia đình hỗ trợ em học tiếp",{thpt:1}],["Cần học gần nhà, chi phí thấp",{cdn:1,gdtx:1}],["Em cần phụ giúp gia đình",{gdtx:1,nghe:1}]]],
+["Em quan tâm",[["Nghề thủ công",{nghe:1,cdn:1}],["Nghề dịch vụ",{nghe:1,cdn:1}],["Kỹ thuật cao",{cdn:1,thpt:1}],["Chưa rõ",{}]]]];
+const opt=(a,v)=>a.map(o=>`<option${v===o?" selected":""}>${o}</option>`).join("");
+/* trắc nghiệm nhanh: điền luôn hồ sơ chatbot */
+const pf=profile();
+$("#qzb").innerHTML=`<div class="pg">${PF.slice(0,4).map(f=>`<label>${f[1]}<select data-f="${f[0]}"><option value="">Chọn…</option>${opt(f[2],pf[f[0]])}</select></label>`).join("")}${QZ.map((q,i)=>`<label class="w">${q[0]}<select data-q="${i}"><option value="">Chọn…</option>${q[1].map((o,j)=>`<option value="${j}">${o[0]}</option>`).join("")}</select></label>`).join("")}</div><button class="btn sm" id="qgo">Gợi ý con đường cho em</button><div id="qr"></div>`;
+$$("#qzb select[data-f]").forEach(x=>x.onchange=()=>{const p=profile();x.value?p[x.dataset.f]=x.value:delete p[x.dataset.f];store.set(PK,p)});
+$("#qgo").onclick=()=>{
+  const ans=$$("#qzb select[data-q]").map(x=>x.value);
+  if(ans.some(v=>v===""))return $("#qr").innerHTML='<p class="soft">Em chọn đủ 4 câu trắc nghiệm nhé.</p>';
+  const sc={thpt:0,cdn:0,gdtx:0,nghe:0};
+  ans.forEach((v,i)=>Object.entries(QZ[i][1][v][1]).forEach(([k,n])=>sc[k]+=n));
+  if(profile().tuoi==="14")sc.nghe-=1;
+  const r=Object.entries(sc).sort((a,b)=>b[1]-a[1]),t=PATHS.find(x=>x.k===r[0][0]),t2=PATHS.find(x=>x.k===r[1][0]);
+  const hn=QZ[3][1][ans[3]][0];
+  setProf({dd:DDMAP[t.k],hn});
+  $("#qr").innerHTML=`<div class="rs" style="--gc:${t.c}"><b><i class="fas fa-${t.ic}"></i> Hợp nhất: ${t.n}</b><p>Em cũng nên xem thêm: <a href="con-duong.html?p=${t2.k}">${t2.n}</a>. Kết quả chỉ để tham khảo, em hãy trao đổi với gia đình và thầy cô.</p><div class="row"><a class="btn sm" href="con-duong.html?p=${t.k}">Xem con đường này</a><button class="btn alt sm" id="qask">Hỏi trợ lý</button></div></div>`;
+  $("#qask").onclick=()=>openChat(`Em vừa làm trắc nghiệm, kết quả gợi ý con đường "${t.n}". Em nên làm gì tiếp theo?`);
+};
+/* các khối con đường */
 $("#ptabs").innerHTML=PATHS.map(x=>`<a class="tile${x.k===pa.k?" on":""}" style="--gc:${x.c}" href="con-duong.html?p=${x.k}"${x.k===pa.k?' aria-current="true"':""}><span class="ib"><i class="fas fa-${x.ic}"></i></span><b>${x.n}</b></a>`).join("");
 document.title=pa.n+" – Ngã Rẽ 10";
+if(new URLSearchParams(location.search).has("p"))setProf({dd:DDMAP[pa.k]}); /* xem con đường nào thì ghi dự định vào hồ sơ */
+const li=(a,ic,c)=>"<ul class='cl'>"+a.map(x=>`<li><i class="fas fa-${ic}" style="color:${c}"></i><span>${x}</span></li>`).join("")+"</ul>";
+const sec=(t,ic,c,inner)=>`<section class="sc" style="--gc:${c}"><h3><i class="fas fa-${ic}"></i>${t}</h3>${inner}</section>`;
+const SK="ngare10_steps",done=()=>{const d=store.get(SK,{});return d&&d[pa.k]||[]};
+const chips=a=>"<div class='chips'>"+a.map(x=>`<span class="cp">${x}</span>`).join("")+"</div>";
+const stepsHtml=()=>{const d=done();return pa.steps.map((x,i)=>`<label class="st"><input type="checkbox" data-i="${i}"${d[i]?" checked":""}><span><b>${i+1}</b>${x}</span></label>`).join("")+`<p class="soft pr">Đã xong ${pa.steps.filter((_,i)=>d[i]).length}/${pa.steps.length} bước</p>`};
+const reg=()=>profile().vung;
+const regHtml=()=>`<label class="rg">Em sống ở vùng<select id="rgs"><option value="">Chọn…</option>${opt(Object.keys(REG),reg())}</select></label>${reg()?chips(REG[reg()])+`<div class="row"><button class="btn alt sm" id="rga">Hỏi trợ lý về nghề ở vùng ${reg().toLowerCase()}</button></div>`:'<p class="soft">Chọn vùng để xem nghề gợi ý.</p>'}`;
 $("#pd").style.setProperty("--gc",pa.c);
-$("#pd").innerHTML=`<h2 style="margin-top:0"><i class="fas fa-${pa.ic}" style="color:${pa.c};margin-right:10px"></i>${pa.n}</h2><p class="soft">${pa.tag}</p>
-<h3>Hợp với em nếu</h3>${ul(pa.who)}<h3>Em cần nhớ</h3>${ul(pa.note)}<h3>Hướng nghề gợi ý</h3>${ul(pa.jobs)}<h3>Các bước tiếp theo</h3><ol class="pl">${pa.steps.map(x=>"<li>"+x+"</li>").join("")}</ol>
-<p class="soft" style="font-size:14px">Thông tin chung để tham khảo. Điều kiện, thời gian, học phí từng trường hãy hỏi trực tiếp nhà trường.</p>
-<h3>Hỏi trợ lý AI</h3><div class="row">${pa.asks.map(x=>`<button class="btn alt sm" data-q="${x}">${x}</button>`).join("")}</div>
-${pa.links.length?`<h3>Công cụ cho con đường này</h3><div class="row">${pa.links.map(l=>`<a class="btn alt sm" href="${l[0]}"><i class="fas fa-${l[2]}" style="margin-right:7px"></i>${l[1]}</a>`).join("")}</div>`:""}`;
+$("#pd").innerHTML=`<div class="ph" style="--gc:${pa.c}"><i class="fas fa-${pa.ic}"></i><div><h2>${pa.n}</h2><p>${pa.tag}</p></div></div>`
++sec("Hợp với em nếu","heart",GC.g,li(pa.who,"circle-check",GC.g))
++sec("Em cần nhớ","triangle-exclamation",GC.y,li(pa.note,"lightbulb",GC.y))
++sec("Hướng nghề gợi ý","briefcase",GC.v,chips(pa.jobs))
++sec("Nghề gợi ý theo vùng","location-dot","#E64980",`<div id="rgb">${regHtml()}</div>`)
++sec("Kế hoạch của em","list-check",pa.c,`<div id="stb">${stepsHtml()}</div>`)
++`<p class="soft" style="font-size:14px;margin-top:14px">Thông tin chung để tham khảo. Điều kiện, thời gian, học phí từng trường hãy hỏi trực tiếp nhà trường.</p>`
++sec("Hỏi trợ lý AI","robot","#3B6CFF",`<div class="row">${pa.asks.map(x=>`<button class="btn alt sm" data-q="${x}">${x}</button>`).join("")}</div>`)
++(pa.links.length?sec("Công cụ cho con đường này","toolbox","#2C4BFF",`<div class="row">${pa.links.map(l=>`<a class="btn alt sm" href="${l[0]}"><i class="fas fa-${l[2]}" style="margin-right:7px"></i>${l[1]}</a>`).join("")}</div>`):"");
+const bindReg=()=>{$("#rgs").onchange=e=>{setProf({vung:e.target.value});$("#rgb").innerHTML=regHtml();bindReg()};const b=$("#rga");if(b)b.onclick=()=>openChat(`Em sống ở vùng ${reg().toLowerCase()}, em muốn theo con đường "${pa.n}". Em nên học nghề gì?`)};
+bindReg();
+$("#stb").onchange=e=>{const d=store.get(SK,{}),a=done().slice();a[e.target.dataset.i]=e.target.checked;d[pa.k]=a;store.set(SK,d);$("#stb").innerHTML=stepsHtml()};
 $$("#pd [data-q]").forEach(b=>b.onclick=()=>openChat(b.dataset.q));
-</script></body></html>
+})();</script></body></html>
