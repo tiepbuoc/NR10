@@ -8,10 +8,9 @@ Nội dung (nghề, nhóm nghề, câu hỏi, môn học, việc cần làm) lư
 Dự án Firebase: `nr10-34b6a` (cấu hình nằm trong `assets/js/firebase-config.js`).
 
 1. **Firestore Database**: vào Build > Firestore Database > Create database (chế độ production).
-2. **Authentication**: Build > Authentication > Sign-in method > bật **Email/Password**. Sang tab Users > Add user, tạo tài khoản quản trị (email + mật khẩu mạnh).
-3. **Rules**: mở `firestore.rules`, thay `THAY_BANG_EMAIL_QUAN_TRI@gmail.com` bằng email vừa tạo, rồi dán vào Firestore > Rules > Publish.
-4. **Tên miền**: Authentication > Settings > Authorized domains, thêm tên miền đang chạy site (ví dụ `tenban.github.io`). `localhost` có sẵn.
-5. Mở `admin.html`, đăng nhập, bấm **Lưu lên Firestore** để nạp dữ liệu mẫu lần đầu.
+2. **Rules**: dán nội dung `firestore.rules` vào Firestore > Rules > Publish. Không cần Authentication.
+3. **Mật khẩu admin**: `nhat1234`, chỉ chặn ở giao diện `admin.html`. Muốn đổi, tạo mã SHA-256 mới và thay `PW_HASH` trong `assets/js/admin.js`.
+4. Mở `admin.html`, nhập mật khẩu, bấm **Lưu lên Firestore** để nạp dữ liệu mẫu lần đầu.
 
 Khi Firestore chưa có dữ liệu, mất mạng hoặc lỗi, site tự dùng bản lưu gần nhất trên máy hoặc dữ liệu mẫu trong `assets/js/data.js`, nên học sinh không bị trắng trang.
 
@@ -23,7 +22,7 @@ Khi Firestore chưa có dữ liệu, mất mạng hoặc lỗi, site tự dùng 
 - **Việc cần làm**: danh sách ở trang Kế hoạch.
 - **Sao lưu**: tải/nhập JSON, khôi phục dữ liệu mẫu.
 
-Thay đổi chỉ lên Firestore khi bấm **Lưu lên Firestore**. Trang không có liên kết từ menu, hãy mở trực tiếp `/admin.html`. Việc ai được ghi dữ liệu do `firestore.rules` quyết định, không phải do việc giấu trang.
+Thay đổi chỉ lên Firestore khi bấm **Lưu lên Firestore**. Trang không có liên kết từ menu, hãy mở trực tiếp `/admin.html`. Lưu ý: vì không dùng tài khoản, mật khẩu chỉ ngăn người dùng thường. Người rành kỹ thuật vẫn có thể ghi trực tiếp vào Firestore; hãy sao lưu JSON định kỳ.
 
 Lưu ý: nếu thay đổi số câu hỏi khảo sát, học sinh đã làm khảo sát trước đó sẽ phải làm lại.
 

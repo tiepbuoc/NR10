@@ -9,21 +9,17 @@ function toast(t){let e=$(".toast");if(e)e.remove();e=document.createElement("di
 function setDirty(v){dirty=v;$("#dirty").hidden=!v}
 window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
 
-// Nếu Firebase không tải được (mất mạng, bị chặn) thì báo rõ
+// Cổng mật khẩu (không dùng Firebase Auth). Chỉ lưu mã băm SHA-256 của mật khẩu.
+const PW_HASH="03f184975659327642443cf1076df192b10556b0b583a10d7d11605261a1482d";
+async function sha(s){if(!(window.crypto&&crypto.subtle))return s==="nhat1234"?PW_HASH:"";const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+user={email:"admin"};
 if(typeof firebase==="undefined"||!window.DB){$("#gmsg").textContent="Không tải được Firebase. Kiểm tra kết nối mạng rồi tải lại trang."}
 else{
-  const auth=firebase.auth();
-  auth.onAuthStateChanged(async u=>{
-    user=u;$("#gmsg").textContent="";
-    if(!u){$("#app").hidden=true;$("#login").hidden=false;return}
-    $("#login").hidden=true;$("#who").textContent=u.email;
-    await load();
-  });
-  $("#lf").onsubmit=async e=>{e.preventDefault();$("#lmsg").textContent="";$("#lgo").disabled=true;
-    try{await auth.signInWithEmailAndPassword($("#em").value.trim(),$("#pw").value)}
-    catch(err){$("#lmsg").textContent=["auth/invalid-credential","auth/wrong-password","auth/user-not-found","auth/invalid-email"].includes(err.code)?"Email hoặc mật khẩu chưa đúng.":err.code==="auth/too-many-requests"?"Đăng nhập sai quá nhiều lần, hãy thử lại sau ít phút.":"Không đăng nhập được ("+(err.code||err.message)+")."}
-    $("#lgo").disabled=false};
-  $("#out").onclick=()=>{if(dirty&&!confirm("Bạn có thay đổi chưa lưu. Vẫn đăng xuất?"))return;setDirty(false);auth.signOut()};
+  const enter=async()=>{$("#login").hidden=true;await load()};
+  if(sessionStorage.getItem("nr10_adm")==="1")enter();else $("#login").hidden=false;
+  $("#lf").onsubmit=async e=>{e.preventDefault();$("#lmsg").textContent="";
+    if(await sha($("#pw").value)===PW_HASH){sessionStorage.setItem("nr10_adm","1");enter()}else $("#lmsg").textContent="Mật khẩu chưa đúng."};
+  $("#out").onclick=()=>{if(dirty&&!confirm("Bạn có thay đổi chưa lưu. Vẫn thoát?"))return;setDirty(false);sessionStorage.removeItem("nr10_adm");location.reload()};
   $("#save").onclick=save;
 }
 
@@ -35,7 +31,7 @@ async function load(){
     setDirty(false);$("#newnote").hidden=!isNew;$("#app").hidden=false;draw();
   }catch(err){
     $("#app").hidden=true;
-    $("#gmsg").textContent=err.code==="permission-denied"?"Tài khoản này chưa có quyền. Kiểm tra firestore.rules (email quản trị) rồi tải lại.":"Không tải được dữ liệu ("+(err.code||err.message)+").";
+    $("#gmsg").textContent=err.code==="permission-denied"?"Chưa có quyền. Hãy dán firestore.rules mới vào Firebase rồi tải lại.":"Không tải được dữ liệu ("+(err.code||err.message)+").";
   }
 }
 
@@ -64,7 +60,7 @@ async function save(){
   $("#save").disabled=true;
   try{
     const out=clone(D);out.groups.forEach(g=>delete g._new);
-    await DB.doc(DATA_DOC).set({...out,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user.email});
+    await DB.doc(DATA_DOC).set({...out,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
     D.groups.forEach(g=>delete g._new);setDirty(false);isNew=false;$("#newnote").hidden=true;toast("Đã lưu lên Firestore");if(tab==="groups")draw();
   }catch(err){toast(err.code==="permission-denied"?"Không có quyền ghi. Kiểm tra firestore.rules.":"Lưu thất bại: "+(err.code||err.message))}
   $("#save").disabled=false;
