@@ -77,3 +77,20 @@ body.chat-open{overflow:hidden}
 .m.md a{color:var(--blue)}
 .m.wait{color:var(--soft);font-style:italic}
 .m.err{background:#FFF0F4;border-color:#F3B7C8;color:#C62255}
+
+/* Hồ sơ trong chatbot, gợi ý nhanh */
+#cp{border-bottom:1px solid var(--line);padding:8px 14px;font-size:14px;max-height:42%;overflow:auto}
+#cp summary{cursor:pointer;font-weight:600}
+#cp .pg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+#cp label{min-width:0;display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--soft)}
+#cp select{font:inherit;font-size:14px;color:var(--ink);padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--card);width:100%;min-width:0}
+#cp .soft{font-size:12px;margin:8px 0 0}
+#cq{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.chip{font:inherit;font-size:14px;text-align:left;cursor:pointer;color:var(--blue);background:var(--card);border:1px solid var(--blue);border-radius:14px;padding:7px 12px}
+/* Trang con đường */
+.sec{font-size:18px;margin:26px 0 8px}
+.tile.on{outline:3px solid var(--gc);outline-offset:2px}
+.pl{margin:6px 0 12px;padding-left:22px;line-height:1.6}
+#pd h3{margin:16px 0 4px;font-size:16px}
+#pd .btn.sm{white-space:normal;text-align:left}
+@media(max-width:720px){nav a{font-size:10px;line-height:1.15}}

@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Ngã Rẽ 10 – Bốn con đường sau lớp 9</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/ui.css"></head><body data-p="paths"><main><h1 style="margin-bottom:6px">4 con đường sau lớp 9</h1><p class="soft">Chọn một không gian để xem em hợp với đâu, cần chuẩn bị gì, rồi hỏi trợ lý AI.</p>
+<div class="tiles" id="ptabs"></div><div class="card" id="pd"></div></main><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><script src="assets/js/firebase-config.js"></script><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
+const pq=new URLSearchParams(location.search).get("p"),pa=PATHS.find(x=>x.k===pq)||PATHS[0];
+const ul=a=>"<ul class='pl'>"+a.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+$("#ptabs").innerHTML=PATHS.map(x=>`<a class="tile${x.k===pa.k?" on":""}" style="--gc:${x.c}" href="con-duong.html?p=${x.k}"${x.k===pa.k?' aria-current="true"':""}><span class="ib"><i class="fas fa-${x.ic}"></i></span><b>${x.n}</b></a>`).join("");
+document.title=pa.n+" – Ngã Rẽ 10";
+$("#pd").style.setProperty("--gc",pa.c);
+$("#pd").innerHTML=`<h2 style="margin-top:0"><i class="fas fa-${pa.ic}" style="color:${pa.c};margin-right:10px"></i>${pa.n}</h2><p class="soft">${pa.tag}</p>
+<h3>Hợp với em nếu</h3>${ul(pa.who)}<h3>Em cần nhớ</h3>${ul(pa.note)}<h3>Hướng nghề gợi ý</h3>${ul(pa.jobs)}<h3>Các bước tiếp theo</h3><ol class="pl">${pa.steps.map(x=>"<li>"+x+"</li>").join("")}</ol>
+<p class="soft" style="font-size:14px">Thông tin chung để tham khảo. Điều kiện, thời gian, học phí từng trường hãy hỏi trực tiếp nhà trường.</p>
+<h3>Hỏi trợ lý AI</h3><div class="row">${pa.asks.map(x=>`<button class="btn alt sm" data-q="${x}">${x}</button>`).join("")}</div>
+${pa.links.length?`<h3>Công cụ cho con đường này</h3><div class="row">${pa.links.map(l=>`<a class="btn alt sm" href="${l[0]}"><i class="fas fa-${l[2]}" style="margin-right:7px"></i>${l[1]}</a>`).join("")}</div>`:""}`;
+$$("#pd [data-q]").forEach(b=>b.onclick=()=>openChat(b.dataset.q));
+</script></body></html>

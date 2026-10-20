@@ -29,6 +29,11 @@ Lưu ý: nếu thay đổi số câu hỏi khảo sát, học sinh đã làm kh�
 ## Đưa lên GitHub Pages
 Đẩy toàn bộ thư mục lên repo, vào Settings > Pages, chọn nhánh main, thư mục root.
 
+## Cấu trúc không gian
+- Trang chủ: 4 con đường sau lớp 9 (Học tiếp THPT, Trung cấp/cao đẳng nghề, Học GDTX, Học nghề dịch vụ) và nút Hỏi trợ lý AI.
+- `con-duong.html?p=thpt|cdn|gdtx|nghe`: trang chi tiết từng con đường. Nội dung nằm trong mảng `PATHS` ở `assets/js/app.js`, sửa ở đó là cập nhật cả trang.
+- Khảo sát, Nghề, Chọn môn, So sánh, Kế hoạch giữ nguyên, dành cho em chọn học THPT.
+
 ## Trợ lý AI
 Chatbot (nút tròn góc phải) gọi API chuẩn OpenAI-compatible giống chatbot AI SMART: `POST {ENDPOINT}/chat/completions`. Cấu hình ở đối tượng `AI` đầu file `assets/js/app.js` (`ENDPOINT`, `MODEL`, `KEY`, `SYSTEM`).
 
@@ -38,3 +43,5 @@ Chatbot (nút tròn góc phải) gọi API chuẩn OpenAI-compatible giống cha
 - Câu trả lời hiển thị Markdown (marked + DOMPurify, tải từ CDN khi cần).
 
 **Bảo mật:** khóa đặt trong file JS thì ai mở trang cũng đọc được và có thể dùng hết hạn mức. Nên để `KEY` rỗng và trỏ `ENDPOINT` tới proxy riêng (ví dụ Firebase Cloud Function giữ khóa phía máy chủ, nhận `{model, messages}` và trả về dạng chat/completions), hoặc ít nhất đặt hạn mức chi tiêu thấp cho khóa này.
+
+**Hồ sơ học sinh:** trong khung chat, học sinh chọn giới tính, tuổi, vùng sống (miền núi, trung du, đồng bằng, thành phố), nơi ở (xã, thị trấn/huyện, phường/thành phố), dự định sau lớp 9 và hướng nghề (thủ công, dịch vụ, kỹ thuật cao). Hồ sơ lưu trong localStorage và được gửi kèm mỗi câu hỏi. Quy tắc tư vấn (không định kiến giới, lưu ý tuổi lao động, gợi ý theo vùng, không bịa số liệu trường) nằm trong `AI.SYSTEM`.

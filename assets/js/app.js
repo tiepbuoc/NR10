@@ -11,16 +11,60 @@ const AI={
   KEY:"sk-4150297863e3eee405805e8609648e6c5cebb1b502ffb46e",
   MAX_TOKENS:1500,
   KEEP:20, // số tin nhắn gần nhất được lưu và gửi kèm
-  SYSTEM:`Bạn là trợ lý hướng nghiệp thân thiện của website "Ngã Rẽ 10", giúp học sinh lớp 9 chọn môn lựa chọn lớp 10.
+  SYSTEM:`Bạn là trợ lý hướng nghiệp thân thiện của website "Ngã Rẽ 10", dành cho học sinh lớp 9 (khoảng 14-15 tuổi) sắp chọn con đường sau khi tốt nghiệp THCS.
+BỐN CON ĐƯỜNG CHÍNH:
+1. Học tiếp THPT (3 năm), hướng tới đại học/cao đẳng; cần chọn môn lựa chọn và tổ hợp phù hợp.
+2. Học nghề: trung cấp, cao đẳng nghề. Nhiều trường nhận học sinh tốt nghiệp THCS, có thể vừa học nghề vừa học văn hóa THPT, tùy trường và tùy chương trình.
+3. Học GDTX (giáo dục thường xuyên): học văn hóa theo chương trình THPT với thời gian linh hoạt, có thể kết hợp học nghề hoặc làm việc.
+4. Học nghề dịch vụ, đi làm sớm: học nghề ngắn hạn, học việc ở cơ sở (làm tóc, nấu ăn, sửa chữa, bán hàng, du lịch...).
+CÁCH TƯ VẤN:
+- Nếu có "HỒ SƠ HỌC SINH" thì dựa vào đó (giới tính, tuổi, vùng sống, nơi ở, dự định, hướng nghề quan tâm) và nói rõ vì sao gợi ý như vậy. Nếu thiếu thông tin quan trọng, hỏi lại tối đa 2 câu ngắn rồi vẫn đưa gợi ý sơ bộ.
+- Theo vùng: gắn gợi ý với cơ hội thực tế ở địa phương. Miền núi: nông lâm nghiệp, chăn nuôi, du lịch cộng đồng, nghề thủ công truyền thống, điện, sửa chữa máy nông nghiệp. Trung du: cây công nghiệp, chế biến nông sản, khu công nghiệp, cơ khí. Đồng bằng: cơ khí, điện - điện tử, chế biến thực phẩm, làng nghề, logistics. Thành phố: dịch vụ, nhà hàng - khách sạn, công nghệ thông tin, thiết kế, kỹ thuật cao. Xã/huyện: nhắc tới trung tâm GDNN-GDTX và trường nghề gần nhà. Đây là gợi ý chung, không khẳng định địa phương nào cũng có.
+- Theo nhóm nghề: thủ công (mây tre, thêu, gốm, mộc, chế tác...), dịch vụ, kỹ thuật cao (điện tử, tự động hóa, CNTT, cơ điện tử...). Nêu điểm mạnh, thử thách, kỹ năng cần có.
+- Giới tính: KHÔNG định kiến. Mọi nghề đều mở cho cả nam và nữ; chỉ nêu lưu ý về môi trường làm việc hoặc sức khỏe khi thật sự liên quan, không loại trừ nghề nào vì giới tính.
+- Tuổi: học sinh dưới 15 tuổi chưa nên đi làm hưởng lương; nghề dịch vụ lúc này nên hiểu là học nghề, học việc. Nhắc kiểm tra quy định lao động hiện hành.
+- Mỗi câu trả lời: đưa 2-3 lựa chọn kèm ưu - nhược điểm ngắn, rồi 1-2 bước tiếp theo cụ thể (hỏi thầy cô chủ nhiệm, đi tham quan trường nghề, hỏi trung tâm GDNN-GDTX ở huyện, trao đổi với gia đình).
+- Nếu em lo về kinh tế gia đình, động viên và nhắc hỏi nhà trường về chính sách hỗ trợ, miễn giảm học phí, học bổng; không nêu mức cụ thể.
 QUY TẮC:
-- Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu, giọng thân thiện phù hợp học sinh.
-- Không quyết định thay học sinh: gợi mở, nêu ưu và nhược điểm, hỏi lại sở thích và môn học em mạnh khi cần.
-- Với thông tin tuyển sinh cụ thể (điểm chuẩn, chỉ tiêu, tổ hợp môn của từng trường), nhắc học sinh kiểm tra thông báo mới nhất của trường và hỏi thầy cô.
-- Nếu câu hỏi không liên quan đến chọn môn, nghề nghiệp, học tập thì từ chối nhẹ nhàng và đưa cuộc trò chuyện về chủ đề chính.
-- Dùng Markdown đơn giản: **in đậm** ý chính, danh sách gạch đầu dòng khi liệt kê. Không dùng bảng phức tạp.`
+- Trả lời tiếng Việt, ngắn gọn, thân thiện, dễ hiểu. Không quyết định thay học sinh, tôn trọng mọi lựa chọn, không coi con đường nào là thấp kém.
+- Không bịa tên trường, học phí, điểm chuẩn, chỉ tiêu, số liệu. Thông tin cụ thể thì nhắc kiểm tra thông báo mới nhất của trường, Sở GD&ĐT hoặc cơ sở giáo dục nghề nghiệp.
+- Câu hỏi ngoài chủ đề hướng nghiệp, học tập: từ chối nhẹ nhàng và đưa về chủ đề chính.
+- Dùng Markdown đơn giản: **in đậm** ý chính, danh sách gạch đầu dòng. Không dùng bảng phức tạp.`
 };
-const NAV=[["index.html","Trang chủ","home","house"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
+const NAV=[["index.html","Trang chủ","home","house"],["con-duong.html","Con đường","paths","signs-post"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
 
+// Bốn con đường sau lớp 9 (nội dung tham khảo chung; chi tiết từng trường cần hỏi trực tiếp nhà trường)
+const PK="ngare10_profile";
+const PATHS=[
+{k:"thpt",n:"Học tiếp THPT",ic:"graduation-cap",c:"#3B6CFF",tag:"3 năm, hướng tới đại học hoặc cao đẳng",
+ who:["Em thích học các môn văn hóa và muốn mở rộng cửa vào đại học, cao đẳng","Em chưa chắc nghề nào và muốn thêm thời gian để khám phá","Em sẵn sàng học đều, ôn thi và chọn tổ hợp môn phù hợp"],
+ note:["Cần chọn môn lựa chọn lớp 10 sớm, vì ảnh hưởng tới khối thi sau này","Nên đối chiếu môn học với nghề em thích bằng khảo sát và trang Chọn môn","Tuyển sinh lớp 10 mỗi tỉnh mỗi khác, hãy xem thông báo mới nhất của Sở GD&ĐT"],
+ jobs:["Công nghệ thông tin, kỹ thuật","Y dược, sinh học","Sư phạm, kinh tế, luật, truyền thông"],
+ steps:["Làm khảo sát nghề nghiệp","Xem các nghề gợi ý","Chọn tổ hợp môn lớp 10","Lập kế hoạch ôn thi vào lớp 10"],
+ links:[["khao-sat.html","Làm khảo sát","clipboard-list"],["mon-hoc.html","Chọn môn","book-open"],["ke-hoach.html","Kế hoạch","list-check"]],
+ asks:["Em nên chọn tổ hợp môn nào để theo nghề em thích?","Học THPT có hợp với em không nếu em thích làm việc tay chân?"]},
+{k:"cdn",n:"Học nghề: trung cấp, cao đẳng nghề",ic:"screwdriver-wrench",c:"#12B886",tag:"Học nghề bài bản, ra trường sớm có tay nghề",
+ who:["Em thích thực hành, làm ra sản phẩm hơn là ngồi học lý thuyết","Em muốn có nghề trong tay và đi làm sớm hơn","Em cần một trường gần nhà hoặc có chính sách hỗ trợ"],
+ note:["Nhiều trường nhận học sinh tốt nghiệp THCS; có thể vừa học nghề vừa học văn hóa THPT, tùy trường","Có thể học liên thông lên bậc cao hơn sau này","Hãy tham quan trường, hỏi rõ ngành, thời gian học và điều kiện tuyển sinh"],
+ jobs:["Điện, điện tử, cơ khí, ô tô","Công nghệ thông tin, tự động hóa","Nấu ăn, du lịch, khách sạn, chăm sóc sắc đẹp"],
+ steps:["Chọn 2-3 nghề em quan tâm","Tìm trường nghề gần nơi ở","Đi tham quan, hỏi tuyển sinh","Trao đổi với gia đình và thầy cô"],
+ links:[["nghe-nghiep.html","Xem các nghề","briefcase"]],
+ asks:["Em là học sinh miền núi, nên học nghề gì dễ có việc gần nhà?","Học cao đẳng nghề sau lớp 9 có học được văn hóa THPT không?"]},
+{k:"gdtx",n:"Học GDTX",ic:"school",c:"#F76707",tag:"Học văn hóa linh hoạt, kết hợp học nghề hoặc làm việc",
+ who:["Em cần thời gian học linh hoạt vì phải giúp gia đình hoặc làm thêm","Em muốn có bằng THPT nhưng chưa vào được hoặc chưa muốn vào trường THPT","Em muốn vừa học văn hóa vừa học một nghề"],
+ note:["Học theo chương trình giáo dục thường xuyên, thường ở trung tâm GDNN-GDTX của huyện hoặc tỉnh","Nên hỏi trung tâm về lịch học, ngành nghề kết hợp và điều kiện nhập học","Có thể là bước đệm để học tiếp nghề, cao đẳng hoặc đại học"],
+ jobs:["Học văn hóa kết hợp nghề ngắn hạn","Làm việc ở cơ sở sản xuất, dịch vụ địa phương","Học tiếp trung cấp, cao đẳng"],
+ steps:["Hỏi thầy cô về trung tâm GDNN-GDTX gần nhà","Tìm hiểu lịch học và học phí","Chọn nghề học kèm","Chuẩn bị hồ sơ nhập học"],
+ links:[],
+ asks:["Học GDTX khác gì học THPT, em có thi đại học được không?","Em muốn vừa học GDTX vừa học nghề thì nên bắt đầu thế nào?"]},
+{k:"nghe",n:"Học nghề dịch vụ, đi làm sớm",ic:"store",c:"#E64980",tag:"Học nghề ngắn hạn, học việc để có thu nhập sớm",
+ who:["Em thích giao tiếp, phục vụ, làm đẹp, nấu ăn, sửa chữa, bán hàng","Em muốn tự lập sớm hoặc kế thừa nghề, cửa hàng của gia đình","Em thích học bằng cách làm thật"],
+ note:["Dưới 15 tuổi chưa nên đi làm hưởng lương; lúc này hãy hiểu là học nghề, học việc","Chọn nơi học uy tín, an toàn, có người hướng dẫn rõ ràng","Nên học thêm kỹ năng giao tiếp, tính toán và học tiếp văn hóa sau này nếu có thể"],
+ jobs:["Làm tóc, spa, nail","Nấu ăn, pha chế, nhà hàng, khách sạn","Sửa xe, sửa điện thoại, bán hàng, du lịch"],
+ steps:["Chọn 1-2 nghề dịch vụ em thích","Hỏi các lớp học nghề ngắn hạn ở địa phương","Học việc thử một thời gian","Nói chuyện với gia đình về kế hoạch"],
+ links:[],
+ asks:["Em 14 tuổi muốn học nghề dịch vụ thì nên bắt đầu từ đâu?","Nghề thủ công ở quê em có thể trở thành nghề nuôi sống không?"]}
+];
 const cix=id=>C.findIndex(c=>c[6]===id),cid=i=>C[i][6];
 function calc(d){
   const gs={};Object.keys(G).forEach(k=>gs[k]=0);Q.forEach((q,i)=>{if(q[0] in gs)gs[q[0]]+=(d.a[i]||0)});
@@ -68,10 +112,13 @@ $("#share").onclick=()=>{
 const CHAT_KEY="ngare10_chat";
 let hist=(()=>{const h=store.get(CHAT_KEY,[]);return Array.isArray(h)?h.filter(m=>m&&(m.role==="user"||m.role==="assistant")&&typeof m.content==="string").slice(-AI.KEEP):[]})();
 const saveHist=()=>store.set(CHAT_KEY,hist.slice(-AI.KEEP));
+const PF=[["gt","Giới tính",["Nam","Nữ","Không muốn nói"]],["tuoi","Tuổi",["14","15","16","17 trở lên"]],["vung","Vùng em sống",["Miền núi","Trung du","Đồng bằng","Thành phố"]],["noi","Nơi ở",["Xã","Thị trấn / huyện","Phường / thành phố"]],["dd","Dự định sau lớp 9",["Học tiếp THPT","Học nghề (trung cấp, cao đẳng nghề)","Học GDTX","Học nghề dịch vụ, đi làm sớm","Chưa biết"]],["hn","Em quan tâm",["Nghề thủ công","Nghề dịch vụ","Kỹ thuật cao","Chưa rõ"]]];
+const profile=()=>{const p=store.get(PK,{});return p&&typeof p==="object"?p:{}};
+function profText(){const p=profile(),l=PF.filter(f=>p[f[0]]).map(f=>`${f[1]}: ${p[f[0]]}`);return l.length?"\n\nHỒ SƠ HỌC SINH (do em tự điền): "+l.join("; ")+".":""}
 // Ngữ cảnh lấy từ nội dung của chính website (nghề, nhóm nghề, kết quả khảo sát của học sinh) để câu trả lời khớp với trang
 function aiContext(){
   try{
-    let t="";
+    let t=profText();
     if(Array.isArray(C)&&C.length){
       t+="\n\nDANH SÁCH NGHỀ TRÊN WEBSITE (tên | nhóm | 4 môn lựa chọn gợi ý | ngành học | khối thi):\n"+C.map(c=>`- ${c[0]} | ${G[c[1]]||c[1]} | ${c[3].split("|").join(", ")} | ${c[4]} | ${c[5]}`).join("\n");
     }
@@ -81,7 +128,7 @@ function aiContext(){
       t+=`\n\nKẾT QUẢ KHẢO SÁT CỦA HỌC SINH NÀY: nhóm nghề phù hợp nhất: ${top}. Môn các em tự thấy mạnh: ${d.s.join(", ")||"chưa chọn"}. Chỉ nhắc tới khi liên quan đến câu hỏi.`;
     }
     return t;
-  }catch(e){return""}
+  }catch(e){return profText()}
 }
 // Gọi API giống callAiApi của AI SMART: POST {endpoint}/chat/completions, trả về choices[0].message.content
 async function callAi(messages){
@@ -105,21 +152,16 @@ function renderBot(el,t){
   loadMd().then(()=>{if(window.marked&&window.DOMPurify){el.innerHTML=DOMPurify.sanitize(marked.parse(t,{breaks:true}));el.classList.add("md");$$("a",el).forEach(a=>{a.target="_blank";a.rel="noopener noreferrer"})}const b=$("#cb");if(b)b.scrollTop=1e9});
 }
 
-const GREET="Chào bạn! Bạn đang băn khoăn điều gì về việc chọn môn lớp 10?";
+const GREET="Chào bạn! Mình là trợ lý hướng nghiệp. Sau lớp 9, em đang nghĩ tới con đường nào: học THPT, học nghề, học GDTX hay học nghề dịch vụ? Điền hồ sơ bên dưới để mình tư vấn đúng hơn nhé.";
+const QUICK=["Em nên chọn con đường nào sau lớp 9?","Gợi ý nghề hợp với vùng em sống","So sánh học nghề và học GDTX giúp em"];
 function closeChat(){$("#chat")?.remove();$("#chat-bd")?.remove();document.body.classList.remove("chat-open");const f=$("#chat-fab");f.hidden=false;f.focus()}
-function openChat(){
+function openChat(pre){
   if($("#chat"))return;$("#chat-fab").hidden=true;document.body.classList.add("chat-open");
-  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button aria-label="Xóa cuộc trò chuyện" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
+  const sel=f=>`<label>${f[1]}<select data-f="${f[0]}"><option value="">Chọn…</option>${f[2].map(o=>`<option${profile()[f[0]]===o?" selected":""}>${o}</option>`).join("")}</select></label>`;
+  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button aria-label="Cuộc trò chuyện mới" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><details id="cp"${Object.keys(profile()).length?"":" open"}><summary><i class="fas fa-user-pen ic"></i>Hồ sơ của em</summary><div class="pg">${PF.map(sel).join("")}</div><p class="soft">Chỉ lưu trên máy em, dùng để trợ lý tư vấn sát hơn.</p></details><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
   const add=(t,c)=>{const m=document.createElement("div");m.className="m "+c;if(c==="b")renderBot(m,t);else m.textContent=t;$("#cb").appendChild(m);$("#cb").scrollTop=1e9;return m};
-  const draw=()=>{$("#cb").innerHTML="";add(GREET,"b");hist.forEach(m=>add(m.content,m.role==="user"?"u":"b"))};
-  draw();
-  $("#chat-bd").onclick=closeChat;$("#cx").onclick=closeChat;
-  $("#cn").onclick=()=>{hist=[];saveHist();draw();$("#ci").focus()};
-  $("#chat").addEventListener("keydown",e=>{if(e.key==="Escape"){e.stopPropagation();closeChat()}});
-  $("#ci").focus();
-  $("#cf").onsubmit=async e=>{
-    e.preventDefault();const t=$("#ci").value.trim();if(!t||$("#cs").disabled)return;
-    $("#ci").value="";add(t,"u");hist.push({role:"user",content:t});
+  const send=async t=>{
+    if(!t||$("#cs").disabled)return;$("#ci").value="";$("#cq")?.remove();$("#cp").open=false;add(t,"u");hist.push({role:"user",content:t});
     $("#cs").disabled=true;const w=add("Đang trả lời…","b");w.classList.add("wait");
     try{
       const a=await callAi([{role:"system",content:AI.SYSTEM+aiContext()},...hist.slice(-AI.KEEP)]);
@@ -130,5 +172,14 @@ function openChat(){
       w.textContent="Trợ lý đang gặp sự cố kết nối ("+err.message+"). Bạn thử lại sau hoặc hỏi thầy cô nhé.";
     }finally{const b=$("#cs");if(b){b.disabled=false;$("#ci")?.focus()}}
   };
+  const draw=()=>{$("#cb").innerHTML="";add(GREET,"b");hist.forEach(m=>add(m.content,m.role==="user"?"u":"b"));
+    if(!hist.length){const q=document.createElement("div");q.id="cq";q.innerHTML=QUICK.map(x=>`<button type="button" class="chip">${x}</button>`).join("");q.onclick=e=>{const b=e.target.closest("button");if(b)send(b.textContent)};$("#cb").appendChild(q)}};
+  draw();
+  $$("#cp select").forEach(x=>x.onchange=()=>{const p=profile();if(x.value)p[x.dataset.f]=x.value;else delete p[x.dataset.f];store.set(PK,p)});
+  $("#chat-bd").onclick=closeChat;$("#cx").onclick=closeChat;
+  $("#cn").onclick=()=>{hist=[];saveHist();draw();$("#ci").focus()};
+  $("#chat").addEventListener("keydown",e=>{if(e.key==="Escape"){e.stopPropagation();closeChat()}});
+  $("#cf").onsubmit=e=>{e.preventDefault();send($("#ci").value.trim())};
+  if(typeof pre==="string"&&pre)send(pre);else $("#ci").focus();
 }
-$("#chat-fab").onclick=openChat;
+$("#chat-fab").onclick=()=>openChat();
