@@ -7,6 +7,6 @@ const pre=+new URLSearchParams(location.search).get("nghe");if(C[pre]&&new URLSe
 function go2(){const s=$$("#pick input:checked").map(x=>x.value);$("#msg").textContent=s.length<4?`Bạn đã chọn ${s.length}/4 môn.`:"Đã đủ 4 môn.";
  if(s.length<4){$("#out").innerHTML="";return}
  const r=C.map((c,i)=>({i,c,h:c[3].split("|").filter(x=>s.includes(x)).length})).sort((a,b)=>b.h-a.h).slice(0,5);
- $("#out").innerHTML=`<p><b>Tổ hợp của bạn:</b> Lịch sử (bắt buộc) + ${chips(s,s)}</p><h3 style="margin-top:18px">Nghề hợp nhất với tổ hợp này</h3>${r.map(t=>`<details class="card" style="margin:10px 0"><summary>${t.c[0]}<small>Trùng ${t.h}/4 môn. ${G[t.c[1]]}</small></summary><div class="in">${careerBody(t.i,s)}</div></details>`).join("")}`}
+ $("#out").innerHTML=`<p><b>Tổ hợp của bạn:</b> Lịch sử (bắt buộc) + ${chips(s,s)}</p><h3 style="margin-top:18px">Nghề hợp nhất với tổ hợp này</h3>${r.map(t=>`<button class="card cbtn" data-pop="${t.i}" data-s="${s.join('|')}"><i class="fas fa-${GI[t.c[1]]}" style="font-size:22px;width:30px;text-align:center;color:var(--blue)"></i><span class="cb"><span>${t.c[0]}</span><small>Trùng ${t.h}/4 môn. ${G[t.c[1]]}</small></span><i class="fas fa-chevron-right"></i></button>`).join("")}`}
 $("#pick").onchange=e=>{if($$("#pick input:checked").length>4){e.target.checked=false;go2();$("#msg").textContent="Chỉ chọn đúng 4 môn. Hãy bỏ một môn trước.";return}go2()};go2();
 </script></body></html>

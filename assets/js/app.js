@@ -29,8 +29,16 @@ document.addEventListener("click",e=>{
 
 // Khung trang
 const cur=document.body.dataset.p;
-document.body.insertAdjacentHTML("afterbegin",`<header class="top"><a class="logo" href="index.html" aria-label="Về trang chủ">Ngã Rẽ<i>10</i></a><nav aria-label="Các mục chính">${NAV.map(n=>`<a href="${n[0]}" ${n[2]===cur?'aria-current="page"':""}><i class="fas fa-${n[3]}"></i><span>${n[1]}</span></a>`).join("")}</nav><button class="btn alt sm" id="share" aria-label="Chia sẻ mã QR"><i class="fas fa-qrcode"></i><span class="lb"> Chia sẻ</span></button></header>`);
-document.body.insertAdjacentHTML("beforeend",`<footer><p>Ngã Rẽ 10 là công cụ tham khảo cho học sinh lớp 9. Công cụ không thay thế tư vấn của thầy cô và gia đình. Thông tin tuyển sinh và tổ hợp môn thay đổi theo năm và theo trường, hãy kiểm tra thông báo mới nhất của trường THPT bạn quan tâm. Dữ liệu cá nhân chỉ lưu trên máy của bạn.</p></footer><button class="btn" id="chat-fab" aria-label="Hỏi trợ lý"><i class="fas fa-comments"></i><span class="lb"> Hỏi trợ lý</span></button>`);
+document.body.insertAdjacentHTML("afterbegin",`<header class="top"><a class="logo" href="index.html" aria-label="Về trang chủ">Ngã Rẽ<i>10</i></a><nav id="mainnav" aria-label="Các mục chính">${NAV.map(n=>`<a href="${n[0]}" ${n[2]===cur?'aria-current="page"':""}><i class="fas fa-${n[3]}"></i><span>${n[1]}</span></a>`).join("")}</nav><button class="btn alt sm" id="share" aria-label="Chia sẻ mã QR"><i class="fas fa-qrcode"></i><span class="lb"> Chia sẻ</span></button></header>`);
+document.body.insertAdjacentHTML("beforeend",`<footer><p>Ngã Rẽ 10 là công cụ tham khảo cho học sinh lớp 9. Công cụ không thay thế tư vấn của thầy cô và gia đình. Thông tin tuyển sinh và tổ hợp môn thay đổi theo năm và theo trường, hãy kiểm tra thông báo mới nhất của trường THPT bạn quan tâm. Dữ liệu cá nhân chỉ lưu trên máy của bạn.</p></footer><button class="btn" id="chat-fab" aria-label="Hỏi trợ lý"><i class="fas fa-comments"></i></button><button id="navtg" aria-controls="mainnav" aria-expanded="true" aria-label="Ẩn menu"><i class="fas fa-chevron-down"></i></button>`);
+
+// Popup chi tiết
+function pop(h){let d=$("#pop");if(!d){document.body.insertAdjacentHTML("beforeend",`<dialog id="pop"><button class="px" aria-label="Đóng"><i class="fas fa-xmark"></i></button><div id="pb"></div></dialog>`);d=$("#pop");$(".px",d).onclick=()=>d.close();d.addEventListener("click",e=>{if(e.target===d)d.close()})}$("#pb").innerHTML=h;$("#pb").scrollTop=0;d.showModal()}
+function careerPop(i,s=[]){const c=C[i];pop(`<h3 class="pt"><i class="fas fa-${GI[c[1]]} ic"></i>${c[0]}</h3><p class="soft" style="font-size:14px;margin:0 0 6px">${G[c[1]]}</p>${careerBody(i,s)}`)}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pop]");if(b)careerPop(+b.dataset.pop,(b.dataset.s||"").split("|").filter(Boolean))});
+// Ẩn hiện menu trên điện thoại
+function setNav(off){document.body.classList.toggle("nav-off",off);const b=$("#navtg");b.setAttribute("aria-expanded",String(!off));b.setAttribute("aria-label",off?"Hiện menu":"Ẩn menu");b.innerHTML=`<i class="fas fa-${off?"bars":"chevron-down"}"></i>`;store.set("ngare10_navoff",off)}
+$("#navtg").onclick=()=>setNav(!document.body.classList.contains("nav-off"));setNav(store.get("ngare10_navoff",false)===true);
 
 // Chia sẻ QR
 $("#share").onclick=()=>{

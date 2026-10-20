@@ -6,7 +6,7 @@
 <div class="row"><button class="btn" onclick="print()"><i class="fas fa-print ic"></i>In hoặc lưu thành PDF</button><span class="soft" id="saved"></span></div></main><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
 const P=store.get(PLAN,{}),O=`<option value="">Chưa chọn</option>`+C.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join("")+`<option value="gdtx">Học giáo dục thường xuyên</option><option value="nghe">Học trường nghề</option>`;
 const ex={gdtx:"Học văn hóa linh hoạt, có thể kết hợp học nghề.",nghe:"Học nghề sớm, ra đi làm nhanh, vẫn có thể học liên thông."};
-function info(v,el){const x=$(el);x.innerHTML=v===undefined||v===""?"":(C[v]?`<p>${C[v][2]}</p>${chips(C[v][3].split("|"))}`:`<p>${ex[v]||""}</p>`)}
+function info(v,el){const x=$(el);x.innerHTML=v===undefined||v===""?"":(C[v]?`<p><button class="btn alt sm" data-pop="${v}"><i class="fas fa-circle-info ic"></i>Xem chi tiết</button></p>`:`<p>${ex[v]||""}</p>`)}
 function save(){store.set(PLAN,P);$("#saved").textContent="Đã lưu";}
 ["main","backup"].forEach(k=>{const s=$("#"+k);s.innerHTML=O;s.value=P[k]===undefined?"":P[k];info(s.value,k==="main"?"#mainInfo":"#backInfo");
  s.onchange=()=>{P[k]=C[s.value]?+s.value:s.value;info(s.value,k==="main"?"#mainInfo":"#backInfo");save()}});
