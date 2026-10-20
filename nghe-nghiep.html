@@ -1,12 +1,12 @@
-<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Nghề nghiệp – Ngã Rẽ 10</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"><link rel="stylesheet" href="assets/css/style.css"></head><body data-p="careers"><main><h2>Tra cứu nghề nghiệp</h2><p class="soft">Bấm vào từng nghề để xem tổ hợp môn gợi ý và ngành học sau THPT.</p>
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Nghề nghiệp – Ngã Rẽ 10</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="assets/css/style.css"></head><body data-p="careers"><main><h2>Tra cứu nghề nghiệp</h2><p class="soft">Bấm vào từng nghề để xem tổ hợp môn gợi ý và ngành học sau THPT.</p>
 <p><label>Tìm theo từ khóa <input type="search" id="kw" placeholder="ví dụ: thiết kế, y, luật"></label> <label>Môn lựa chọn <select id="sj"><option value="">Tất cả</option></select></label></p>
 <div class="filters" id="filters" role="group" aria-label="Lọc theo nhóm nghề"></div><p class="soft" id="cnt"></p><div class="grid" id="clist"></div>
 </main><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script><script>
 let f="*";$("#sj").insertAdjacentHTML("beforeend",SUBL.map(s=>`<option>${s}</option>`).join(""));
-function draw(){$("#filters").innerHTML=[["*","Tất cả"],...Object.entries(G)].map(([k,v])=>`<button data-f="${k}" aria-pressed="${f===k}">${v}</button>`).join("");
+function draw(){$("#filters").innerHTML=[["*","Tất cả"],...Object.entries(G)].map(([k,v])=>`<button data-f="${k}" aria-pressed="${f===k}">${GI[k]?`<i class="fas fa-${GI[k]} ic"></i>`:""}${v}</button>`).join("");
  const kw=$("#kw").value.trim().toLowerCase(),sj=$("#sj").value;
  const r=C.map((c,i)=>i).filter(i=>{const c=C[i];return(f==="*"||c[1]===f)&&(!sj||c[3].split("|").includes(sj))&&(!kw||(c[0]+c[2]+c[4]).toLowerCase().includes(kw))});
  $("#cnt").textContent=r.length?`Có ${r.length} nghề phù hợp bộ lọc.`:"Không có nghề nào khớp. Hãy bỏ bớt bộ lọc hoặc đổi từ khóa.";
- $("#clist").innerHTML=r.map(i=>`<details class="card"><summary>${C[i][0]}<small>${G[C[i][1]]}</small></summary><div class="in">${careerBody(i)}</div></details>`).join("")}
+ $("#clist").innerHTML=r.map(i=>`<details class="card"><summary><i class="fas fa-${GI[C[i][1]]} ic"></i>${C[i][0]}<small>${G[C[i][1]]}</small></summary><div class="in">${careerBody(i)}</div></details>`).join("")}
 $("#filters").onclick=e=>{const b=e.target.closest("[data-f]");if(b){f=b.dataset.f;draw()}};$("#kw").oninput=draw;$("#sj").onchange=draw;draw();
 </script></body></html>

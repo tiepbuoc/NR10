@@ -4,7 +4,8 @@ const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelecto
 const store={get(k,d){try{const r=localStorage.getItem(k);return r==null?d:JSON.parse(r)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 // Trợ lý AI: đặt ENDPOINT là địa chỉ proxy của bạn (không đặt khóa API trong file này). Xem README.
 const AI={ENDPOINT:"",MODEL:"",SYSTEM:"Bạn là trợ lý hướng nghiệp thân thiện cho học sinh lớp 9 đang chọn môn lớp 10. Trả lời ngắn, dễ hiểu bằng tiếng Việt. Không quyết định thay học sinh; gợi mở, nêu ưu và nhược điểm. Với thông tin tuyển sinh cụ thể, nhắc học sinh kiểm tra thông báo mới nhất của trường."};
-const NAV=[["index.html","Trang chủ","home"],["khao-sat.html","Khảo sát","survey"],["nghe-nghiep.html","Nghề nghiệp","careers"],["mon-hoc.html","Chọn môn","subjects"],["so-sanh.html","So sánh","compare"],["ke-hoach.html","Kế hoạch","plan"]];
+const NAV=[["index.html","Trang chủ","home","house"],["khao-sat.html","Khảo sát","survey","clipboard-list"],["nghe-nghiep.html","Nghề","careers","briefcase"],["mon-hoc.html","Chọn môn","subjects","book-open"],["so-sanh.html","So sánh","compare","scale-balanced"],["ke-hoach.html","Kế hoạch","plan","list-check"]];
+const GI={K:"microchip",T:"flask",N:"palette",X:"people-group",D:"chart-line",Q:"landmark"};
 
 function calc(d){
   const gs={K:0,T:0,N:0,X:0,D:0,Q:0};Q.forEach((q,i)=>gs[q[1]]+=d.a[i]);
@@ -14,7 +15,7 @@ function calc(d){
 }
 const chips=(m,s=[])=>m.map(x=>`<span class="chip ${s.includes(x)?"pick":""}">${x}</span>`).join("");
 const inCmp=i=>store.get(CMP,[]).includes(i);
-function careerBody(i,s=[]){const c=C[i];return `<p>${c[2]}</p><p style="margin-bottom:2px"><b>Môn lựa chọn gợi ý:</b></p>${chips(c[3].split("|"),s)}<p><b>Ngành học:</b> ${c[4]}<br><b>Khối thi tham khảo:</b> ${c[5]}</p><div class="row" style="margin:8px 0 0"><button class="btn alt sm" data-cmp="${i}">${inCmp(i)?"Bỏ khỏi so sánh":"Thêm vào so sánh"}</button><a class="btn alt sm" href="mon-hoc.html?nghe=${i}">Xem tổ hợp</a></div>`}
+function careerBody(i,s=[]){const c=C[i];return `<p>${c[2]}</p><p style="margin-bottom:2px"><b>Môn lựa chọn gợi ý:</b></p>${chips(c[3].split("|"),s)}<p><b>Ngành học:</b> ${c[4]}<br><b>Khối thi tham khảo:</b> ${c[5]}</p><div class="row" style="margin:8px 0 0"><button class="btn alt sm" data-cmp="${i}">${inCmp(i)?"Bỏ khỏi so sánh":"Thêm vào so sánh"}</button><a class="btn alt sm" href="mon-hoc.html?nghe=${i}"><i class="fas fa-book-open ic"></i>Xem tổ hợp</a></div>`}
 function toast(t){let e=$(".toast");if(e)e.remove();e=document.createElement("div");e.className="toast";e.setAttribute("role","status");e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-cmp]");if(!b)return;
@@ -28,8 +29,8 @@ document.addEventListener("click",e=>{
 
 // Khung trang
 const cur=document.body.dataset.p;
-document.body.insertAdjacentHTML("afterbegin",`<header class="top"><a class="logo" href="index.html" aria-label="Về trang chủ">Ngã Rẽ<i>10</i></a><nav aria-label="Các mục chính">${NAV.map(n=>`<a href="${n[0]}" ${n[2]===cur?'aria-current="page"':""}>${n[1]}</a>`).join("")}<button class="btn alt sm" id="share" style="box-shadow:none">Chia sẻ QR</button></nav></header>`);
-document.body.insertAdjacentHTML("beforeend",`<footer><p>Ngã Rẽ 10 là công cụ tham khảo cho học sinh lớp 9. Công cụ không thay thế tư vấn của thầy cô và gia đình. Thông tin tuyển sinh và tổ hợp môn thay đổi theo năm và theo trường, hãy kiểm tra thông báo mới nhất của trường THPT bạn quan tâm. Dữ liệu cá nhân chỉ lưu trên máy của bạn.</p></footer><button class="btn" id="chat-fab">Hỏi trợ lý</button>`);
+document.body.insertAdjacentHTML("afterbegin",`<header class="top"><a class="logo" href="index.html" aria-label="Về trang chủ">Ngã Rẽ<i>10</i></a><nav aria-label="Các mục chính">${NAV.map(n=>`<a href="${n[0]}" ${n[2]===cur?'aria-current="page"':""}><i class="fas fa-${n[3]}"></i><span>${n[1]}</span></a>`).join("")}</nav><button class="btn alt sm" id="share" aria-label="Chia sẻ mã QR"><i class="fas fa-qrcode"></i><span class="lb"> Chia sẻ</span></button></header>`);
+document.body.insertAdjacentHTML("beforeend",`<footer><p>Ngã Rẽ 10 là công cụ tham khảo cho học sinh lớp 9. Công cụ không thay thế tư vấn của thầy cô và gia đình. Thông tin tuyển sinh và tổ hợp môn thay đổi theo năm và theo trường, hãy kiểm tra thông báo mới nhất của trường THPT bạn quan tâm. Dữ liệu cá nhân chỉ lưu trên máy của bạn.</p></footer><button class="btn" id="chat-fab" aria-label="Hỏi trợ lý"><i class="fas fa-comments"></i><span class="lb"> Hỏi trợ lý</span></button>`);
 
 // Chia sẻ QR
 $("#share").onclick=()=>{
@@ -43,7 +44,7 @@ $("#share").onclick=()=>{
 let hist=[{role:"system",content:AI.SYSTEM}];
 $("#chat-fab").onclick=()=>{
   if($("#chat"))return;$("#chat-fab").hidden=true;
-  document.body.insertAdjacentHTML("beforeend",`<div class="card" id="chat" role="dialog" aria-label="Trợ lý hướng nghiệp"><div class="h">Trợ lý Ngã Rẽ 10<button aria-label="Đóng" id="cx">×</button></div><div id="cb"><div class="m b">Chào bạn! Bạn đang băn khoăn điều gì về việc chọn môn lớp 10?</div></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm">Gửi</button></form></div>`);
+  document.body.insertAdjacentHTML("beforeend",`<div class="card" id="chat" role="dialog" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><button aria-label="Đóng" id="cx">×</button></div><div id="cb"><div class="m b">Chào bạn! Bạn đang băn khoăn điều gì về việc chọn môn lớp 10?</div></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
   const add=(t,c)=>{const m=document.createElement("div");m.className="m "+c;m.textContent=t;$("#cb").appendChild(m);$("#cb").scrollTop=1e9;return m};
   $("#cx").onclick=()=>{$("#chat").remove();$("#chat-fab").hidden=false};$("#ci").focus();
   $("#cf").onsubmit=async e=>{e.preventDefault();const t=$("#ci").value.trim();if(!t)return;$("#ci").value="";add(t,"u");
