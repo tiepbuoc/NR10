@@ -88,7 +88,7 @@ document.addEventListener("click",e=>{
 });
 
 // Khung trang
-const cur=document.body.dataset.p;
+let cur=document.body.dataset.p;
 document.body.insertAdjacentHTML("afterbegin",`<header class="top"><a class="logo" href="index.html" aria-label="Về trang chủ">Ngã Rẽ<i>10</i></a><nav id="mainnav" aria-label="Các mục chính">${NAV.map(n=>`<a href="${n[0]}" ${n[2]===cur?'aria-current="page"':""}><i class="fas fa-${n[3]}"></i><span>${n[1]}</span></a>`).join("")}</nav><button class="btn alt sm" id="share" aria-label="Chia sẻ mã QR"><i class="fas fa-qrcode"></i><span class="lb"> Chia sẻ</span></button></header>`);
 document.body.insertAdjacentHTML("beforeend",`<footer><p>Công cụ tham khảo, không thay thế tư vấn của thầy cô và gia đình. Dữ liệu cá nhân chỉ lưu trên máy bạn.</p></footer><button class="btn" id="chat-fab" aria-label="Hỏi trợ lý"><i class="fas fa-comments"></i></button><button id="navtg" aria-controls="mainnav" aria-expanded="true" aria-label="Ẩn menu"><i class="fas fa-chevron-down"></i></button>`);
 
@@ -162,10 +162,10 @@ function closeChat(){$("#chat")?.remove();$("#chat-bd")?.remove();document.body.
 function openChat(pre){
   if($("#chat"))return;$("#chat-fab").hidden=true;document.body.classList.add("chat-open");
   const sel=f=>`<label>${f[1]}<select data-f="${f[0]}"><option value="">Chọn…</option>${f[2].map(o=>`<option${profile()[f[0]]===o?" selected":""}>${o}</option>`).join("")}</select></label>`;
-  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button aria-label="Cuộc trò chuyện mới" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><details id="cp"${Object.keys(profile()).length?"":" open"}><summary><i class="fas fa-user-pen ic"></i>Hồ sơ của em</summary><div class="pg">${PF.map(sel).join("")}</div><p class="soft">Chỉ lưu trên máy em, dùng để trợ lý tư vấn sát hơn.</p></details><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
+  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button aria-label="Cuộc trò chuyện mới" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><details id="cprof"${Object.keys(profile()).length?"":" open"}><summary><i class="fas fa-user-pen ic"></i>Hồ sơ của em</summary><div class="pg">${PF.map(sel).join("")}</div><p class="soft">Chỉ lưu trên máy em, dùng để trợ lý tư vấn sát hơn.</p></details><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
   const add=(t,c)=>{const m=document.createElement("div");m.className="m "+c;if(c==="b")renderBot(m,t);else m.textContent=t;$("#cb").appendChild(m);$("#cb").scrollTop=1e9;return m};
   const send=async t=>{
-    if(!t||$("#cs").disabled)return;$("#ci").value="";$("#cq")?.remove();$("#cp").open=false;add(t,"u");hist.push({role:"user",content:t});
+    if(!t||$("#cs").disabled)return;$("#ci").value="";$("#cq")?.remove();$("#cprof").open=false;add(t,"u");hist.push({role:"user",content:t});
     $("#cs").disabled=true;const w=add("Đang trả lời…","b");w.classList.add("wait");
     try{
       const a=await callAi([{role:"system",content:AI.SYSTEM+aiContext()},...hist.slice(-AI.KEEP)]);
@@ -179,7 +179,7 @@ function openChat(pre){
   const draw=()=>{$("#cb").innerHTML="";add(GREET,"b");hist.forEach(m=>add(m.content,m.role==="user"?"u":"b"));
     if(!hist.length){const q=document.createElement("div");q.id="cq";q.innerHTML=QUICK.map(x=>`<button type="button" class="chip">${x}</button>`).join("");q.onclick=e=>{const b=e.target.closest("button");if(b)send(b.textContent)};$("#cb").appendChild(q)}};
   draw();
-  $$("#cp select").forEach(x=>x.onchange=()=>{const p=profile();if(x.value)p[x.dataset.f]=x.value;else delete p[x.dataset.f];store.set(PK,p)});
+  $$("#cprof select").forEach(x=>x.onchange=()=>{const p=profile();if(x.value)p[x.dataset.f]=x.value;else delete p[x.dataset.f];store.set(PK,p)});
   $("#chat-bd").onclick=closeChat;$("#cx").onclick=closeChat;
   $("#cn").onclick=()=>{hist=[];saveHist();draw();$("#ci").focus()};
   $("#chat").addEventListener("keydown",e=>{if(e.key==="Escape"){e.stopPropagation();closeChat()}});
@@ -187,3 +187,36 @@ function openChat(pre){
   if(typeof pre==="string"&&pre)send(pre);else $("#ci").focus();
 }
 $("#chat-fab").onclick=()=>openChat();
+
+// Chuyển trang không tải lại: lấy HTML trang đích, thay <main>, chạy lại script của trang
+const PAGES=["index","con-duong","khao-sat","nghe-nghiep","mon-hoc","so-sanh","ke-hoach"],spaCache=new Map();let spaTok=0;
+function spaUrl(h){try{const u=new URL(h,location.href);if(u.origin!==location.origin)return null;const m=u.pathname.split("/").pop().replace(/\.html$/,"")||"index";return PAGES.includes(m)?u:null}catch(e){return null}}
+function spaLoad(u){const k=u.pathname;if(!spaCache.has(k))spaCache.set(k,fetch(k).then(r=>{if(!r.ok)throw new Error(r.status);return r.text()}).then(t=>new DOMParser().parseFromString(t,"text/html")).catch(e=>{spaCache.delete(k);throw e}));return spaCache.get(k)}
+async function spaGo(href,push=true){
+  const u=spaUrl(href);if(!u){location.href=href;return}
+  const tok=++spaTok;
+  try{
+    const d=await spaLoad(u);if(tok!==spaTok)return;
+    const nm=d.querySelector("main"),cm=$("main");if(!nm||!cm)throw new Error("no main");
+    $$("dialog[open]").forEach(x=>x.close());
+    if(push)history.pushState(null,"",u.pathname+u.search+u.hash);
+    document.title=d.title;cur=document.body.dataset.p=d.body.dataset.p;
+    $$("#mainnav a").forEach((a,i)=>NAV[i][2]===cur?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+    delete window.onCmpChange;
+    const n=document.importNode(nm,true);n.classList.add("enter");cm.replaceWith(n);
+    window.scrollTo(0,0);
+    d.querySelectorAll("script:not([src])").forEach(x=>{try{new Function(x.textContent)()}catch(e){console.error(e)}});
+    if(u.hash)$(u.hash)?.scrollIntoView();
+  }catch(e){location.href=href}
+}
+document.addEventListener("click",e=>{
+  if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+  const a=e.target.closest("a[href]");if(!a||a.target||a.hasAttribute("download"))return;
+  const u=spaUrl(a.href);if(!u)return;
+  if(u.pathname===location.pathname&&u.search===location.search&&u.hash)return;
+  e.preventDefault();spaGo(a.href,u.href!==location.href);
+});
+addEventListener("popstate",()=>spaGo(location.href,false));
+const warm=e=>{const a=e.target.closest&&e.target.closest("a[href]"),u=a&&spaUrl(a.href);if(u)spaLoad(u).catch(()=>{})};
+document.addEventListener("pointerover",warm);document.addEventListener("touchstart",warm,{passive:true});
+setTimeout(()=>PAGES.forEach(x=>{const u=spaUrl(x+".html");if(u)spaLoad(u).catch(()=>{})}),1200);

@@ -32,8 +32,11 @@ Lưu ý: nếu thay đổi số câu hỏi khảo sát, học sinh đã làm kh�
 ## Cấu trúc không gian
 - Trang chủ: 4 con đường sau lớp 9 (Học tiếp THPT, Trung cấp/cao đẳng nghề, Học GDTX, Học nghề dịch vụ) và nút Hỏi trợ lý AI.
 - `con-duong.html?p=thpt|cdn|gdtx|nghe`: trang chi tiết từng con đường. Nội dung nằm trong mảng `PATHS` ở `assets/js/app.js`, sửa ở đó là cập nhật cả trang.
-- Trang con đường còn có: trắc nghiệm nhanh gợi ý con đường (tự điền hồ sơ chatbot), nghề gợi ý theo vùng (`REG` trong app.js), kế hoạch tick từng bước (lưu trong máy). Xem con đường nào thì "Dự định sau lớp 9" trong hồ sơ cập nhật theo, và chatbot biết em đang xem trang nào.
+- Trang con đường hiển thị từng bước một (thanh tiến độ, Quay lại/Tiếp). Chưa chọn đường: 4 khối chọn hoặc Trắc nghiệm nhanh (`?quiz=1`); đã chọn đường (`?p=...`): 5 bước giới thiệu, lưu ý, nghề, kế hoạch, hỏi trợ lý. Có: trắc nghiệm nhanh gợi ý con đường (tự điền hồ sơ chatbot), nghề gợi ý theo vùng (`REG` trong app.js), kế hoạch tick từng bước (lưu trong máy). Xem con đường nào thì "Dự định sau lớp 9" trong hồ sơ cập nhật theo, và chatbot biết em đang xem trang nào.
 - Khảo sát, Nghề, Chọn môn, So sánh, Kế hoạch giữ nguyên, dành cho em chọn học THPT.
+
+## Chuyển trang không tải lại
+Cuối `assets/js/app.js` có bộ định tuyến nhỏ: bấm menu, logo hoặc liên kết giữa các trang (index, con-duong, khao-sat, nghe-nghiep, mon-hoc, so-sanh, ke-hoach) thì web lấy HTML trang đích, thay phần `<main>` và chạy lại script của trang đó, không tải lại cả trang. Các trang được tải sẵn khi rảnh. Nút Back của trình duyệt vẫn hoạt động. Nếu thêm trang mới, hãy thêm tên vào mảng `PAGES`; `admin.html` vẫn chuyển trang bình thường. Cần chạy qua http/https (GitHub Pages); mở file trực tiếp thì web tự quay về cách chuyển trang thường.
 
 ## Trợ lý AI
 Chatbot (nút tròn góc phải) gọi API chuẩn OpenAI-compatible giống chatbot AI SMART: `POST {ENDPOINT}/chat/completions`. Cấu hình ở đối tượng `AI` đầu file `assets/js/app.js` (`ENDPOINT`, `MODEL`, `KEY`, `SYSTEM`).
