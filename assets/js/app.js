@@ -7,7 +7,8 @@ const store={get(k,d){try{const r=localStorage.getItem(k);return r==null?d:JSON.
 // (ví dụ Firebase Cloud Function giữ khóa ở phía máy chủ). Xem README.
 const AI={
   ENDPOINT:"https://api.shopaikey.com/v1",
-  MODEL:"gpt-4.1-mini-2025-04-14",
+  // Danh sách model theo thứ tự ưu tiên: gặp HTTP 503 (quá tải) thì chuyển sang model kế tiếp.
+  MODELS:["gpt-4.1-mini-2025-04-14","gpt-4o-mini","gpt-5-mini"],
   KEY:"sk-4150297863e3eee405805e8609648e6c5cebb1b502ffb46e",
   MAX_TOKENS:1500,
   KEEP:20, // số tin nhắn gần nhất được lưu và gửi kèm
@@ -135,17 +136,29 @@ function aiContext(){
   }catch(e){return profText()}
 }
 // Gọi API giống callAiApi của AI SMART: POST {endpoint}/chat/completions, trả về choices[0].message.content
+// Có model dự phòng: gặp 503 thì chuyển model kế tiếp và nhớ model đang chạy được cho các lần sau.
+// Chỉ khi cả các model đều 503 mới báo lỗi và lần sau dò lại từ model đầu.
+let aiModelIdx=0;
 async function callAi(messages){
   const url=AI.ENDPOINT.trim().replace(/\/$/,"")+"/chat/completions";
   const headers={"Content-Type":"application/json"};
   if(AI.KEY)headers.Authorization="Bearer "+AI.KEY;
-  const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),60000);
-  try{
-    const r=await fetch(url,{method:"POST",headers,signal:ctl.signal,body:JSON.stringify({model:AI.MODEL,messages,max_tokens:AI.MAX_TOKENS,temperature:.6})});
-    if(!r.ok){const e=await r.text().catch(()=>"");throw new Error("HTTP "+r.status+(e?": "+e.slice(0,120):""))}
-    const j=await r.json();return(j?.choices?.[0]?.message?.content||"").trim();
-  }catch(e){throw e.name==="AbortError"?new Error("quá thời gian chờ"):e}
-  finally{clearTimeout(to)}
+  const n=AI.MODELS.length;
+  for(let i=0;i<n;i++){
+    const idx=(aiModelIdx+i)%n,model=AI.MODELS[idx];
+    const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),60000);
+    try{
+      const r=await fetch(url,{method:"POST",headers,signal:ctl.signal,body:JSON.stringify({model,messages,max_tokens:AI.MAX_TOKENS,temperature:.6})});
+      if(r.status===503){console.warn("Ngã Rẽ 10: model "+model+" đang quá tải (503), thử model kế tiếp...");continue}
+      if(!r.ok){const e=await r.text().catch(()=>"");throw new Error("HTTP "+r.status+(e?": "+e.slice(0,120):""))}
+      const j=await r.json();
+      aiModelIdx=idx; // ghi nhớ model đang hoạt động
+      return(j?.choices?.[0]?.message?.content||"").trim();
+    }catch(e){throw e.name==="AbortError"?new Error("quá thời gian chờ"):e}
+    finally{clearTimeout(to)}
+  }
+  aiModelIdx=0; // tất cả đều 503 → lần sau kiểm tra lại từ model đầu
+  throw new Error("tất cả model đều đang quá tải (503)");
 }
 // Hiển thị Markdown (marked + DOMPurify như AI SMART), tải khi cần; nếu tải lỗi thì hiện chữ thường
 let mdP=null;
