@@ -119,16 +119,26 @@ function renderBot(el,t){
   loadMd().then(()=>{if(window.marked&&window.DOMPurify){el.innerHTML=DOMPurify.sanitize(marked.parse(t,{breaks:true}));el.classList.add("md");$$("a",el).forEach(a=>{a.target="_blank";a.rel="noopener noreferrer"})}const b=$("#cb");if(b)b.scrollTop=1e9});
 }
 
-const GREET="Chào bạn! Mình là trợ lý hướng nghiệp. Sau lớp 9, em đang nghĩ tới con đường nào: học THPT, học nghề, học GDTX hay học nghề dịch vụ? Điền hồ sơ bên dưới để mình tư vấn đúng hơn nhé.";
+const GREET="Chào bạn! Mình là trợ lý hướng nghiệp. Sau lớp 9, em đang nghĩ tới con đường nào: học THPT, học nghề, học GDTX hay học nghề dịch vụ? Bấm biểu tượng hồ sơ ở góc trên khung chat để điền thông tin, mình sẽ tư vấn đúng hơn nhé.";
 const QUICK=["Em nên chọn con đường nào sau lớp 9?","Gợi ý nghề hợp với vùng em sống","So sánh học nghề và học GDTX giúp em"];
-function closeChat(){$("#chat")?.remove();$("#chat-bd")?.remove();document.body.classList.remove("chat-open");const f=$("#chat-fab");f.hidden=false;f.focus()}
+// Popup "Hồ sơ của em": hiện giữa màn hình, làm mờ phần phía sau, bấm Lưu mới ghi vào máy
+function closePf(){$("#pf")?.remove();$("#pf-bd")?.remove();$("#cpf")?.focus()}
+function openProfile(){
+  if($("#pf"))return;
+  const sel=f=>`<label>${f[1]}<select data-f="${f[0]}"><option value="">Chọn…</option>${f[2].map(o=>`<option${profile()[f[0]]===o?" selected":""}>${o}</option>`).join("")}</select></label>`;
+  document.body.insertAdjacentHTML("beforeend",`<div id="pf-bd" aria-hidden="true"></div><div class="card" id="pf" role="dialog" aria-modal="true" aria-label="Hồ sơ của em"><div class="pfh"><span><i class="fas fa-user-pen ic"></i>Hồ sơ của em</span><button type="button" id="pfx" aria-label="Đóng">×</button></div><div class="pg">${PF.map(sel).join("")}</div><p class="soft">Chỉ lưu trên máy em, dùng để trợ lý tư vấn sát hơn.</p><div class="row pfa"><button type="button" class="btn alt sm" id="pfc">Hủy</button><button type="button" class="btn sm" id="pfs">Lưu</button></div></div>`);
+  $("#pf-bd").onclick=closePf;$("#pfx").onclick=closePf;$("#pfc").onclick=closePf;
+  $("#pfs").onclick=()=>{const p=profile();PF.forEach(f=>delete p[f[0]]);$$("#pf select").forEach(x=>{if(x.value)p[x.dataset.f]=x.value});store.set(PK,p);$("#cpf")?.classList.toggle("empty",!Object.keys(p).length);closePf();toast("Đã lưu hồ sơ")};
+  $("#pf").addEventListener("keydown",e=>{if(e.key==="Escape"){e.stopPropagation();closePf()}});
+  $("#pf select").focus();
+}
+function closeChat(){closePf();$("#chat")?.remove();$("#chat-bd")?.remove();document.body.classList.remove("chat-open");const f=$("#chat-fab");f.hidden=false;f.focus()}
 function openChat(pre){
   if($("#chat"))return;$("#chat-fab").hidden=true;document.body.classList.add("chat-open");
-  const sel=f=>`<label>${f[1]}<select data-f="${f[0]}"><option value="">Chọn…</option>${f[2].map(o=>`<option${profile()[f[0]]===o?" selected":""}>${o}</option>`).join("")}</select></label>`;
-  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button aria-label="Cuộc trò chuyện mới" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><details id="cprof"${Object.keys(profile()).length?"":" open"}><summary><i class="fas fa-user-pen ic"></i>Hồ sơ của em</summary><div class="pg">${PF.map(sel).join("")}</div><p class="soft">Chỉ lưu trên máy em, dùng để trợ lý tư vấn sát hơn.</p></details><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off" maxlength="1000"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
+  document.body.insertAdjacentHTML("beforeend",`<div id="chat-bd" aria-hidden="true"></div><div class="card" id="chat" role="dialog" aria-modal="true" aria-label="Trợ lý hướng nghiệp"><div class="h"><span><i class="fas fa-robot ic"></i>Trợ lý Ngã Rẽ 10</span><span class="hb"><button type="button" aria-label="Hồ sơ của em" title="Hồ sơ của em" id="cpf"${Object.keys(profile()).length?"":" class=\"empty\""}><i class="fas fa-user-pen"></i></button><button aria-label="Cuộc trò chuyện mới" title="Cuộc trò chuyện mới" id="cn"><i class="fas fa-rotate-right"></i></button><button aria-label="Đóng" id="cx">×</button></span></div><div id="cb"></div><form id="cf"><input type="text" id="ci" placeholder="Nhập câu hỏi" autocomplete="off" maxlength="1000"><button class="btn sm" id="cs" aria-label="Gửi"><i class="fas fa-paper-plane"></i></button></form></div>`);
   const add=(t,c)=>{const m=document.createElement("div");m.className="m "+c;if(c==="b")renderBot(m,t);else m.textContent=t;$("#cb").appendChild(m);$("#cb").scrollTop=1e9;return m};
   const send=async t=>{
-    if(!t||$("#cs").disabled)return;if(t.length>AI.MAX_MSG){toast("Câu hỏi quá dài, hãy rút gọn lại (tối đa "+AI.MAX_MSG+" ký tự).");return}$("#ci").value="";$("#cq")?.remove();$("#cprof").open=false;add(t,"u");hist.push({role:"user",content:t});
+    if(!t||$("#cs").disabled)return;if(t.length>AI.MAX_MSG){toast("Câu hỏi quá dài, hãy rút gọn lại (tối đa "+AI.MAX_MSG+" ký tự).");return}$("#ci").value="";$("#cq")?.remove();add(t,"u");hist.push({role:"user",content:t});
     $("#cs").disabled=true;const w=add("Đang trả lời…","b");w.classList.add("wait");
     try{
       const a=await GW.ask({message:t,history:hist.slice(0,-1).slice(-AI.KEEP),context:aiContext()});
@@ -142,7 +152,7 @@ function openChat(pre){
   const draw=()=>{$("#cb").innerHTML="";add(GREET,"b");hist.forEach(m=>add(m.content,m.role==="user"?"u":"b"));
     if(!hist.length){const q=document.createElement("div");q.id="cq";q.innerHTML=QUICK.map(x=>`<button type="button" class="chip">${x}</button>`).join("");q.onclick=e=>{const b=e.target.closest("button");if(b)send(b.textContent)};$("#cb").appendChild(q)}};
   draw();GW.prefetch();
-  $$("#cprof select").forEach(x=>x.onchange=()=>{const p=profile();if(x.value)p[x.dataset.f]=x.value;else delete p[x.dataset.f];store.set(PK,p)});
+  $("#cpf").onclick=openProfile;
   $("#chat-bd").onclick=closeChat;$("#cx").onclick=closeChat;
   $("#cn").onclick=()=>{hist=[];saveHist();draw();$("#ci").focus()};
   $("#chat").addEventListener("keydown",e=>{if(e.key==="Escape"){e.stopPropagation();closeChat()}});

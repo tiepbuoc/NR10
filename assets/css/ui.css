@@ -79,12 +79,19 @@ body.chat-open{overflow:hidden}
 .m.err{background:#FFF0F4;border-color:#F3B7C8;color:#C62255}
 
 /* Hồ sơ trong chatbot, gợi ý nhanh */
-#cprof{border-bottom:1px solid var(--line);padding:8px 14px;font-size:14px;max-height:42%;overflow:auto}
-#cprof summary{cursor:pointer;font-weight:600}
-#cprof .pg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
-#cprof label{min-width:0;display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--soft)}
-#cprof select{font:inherit;font-size:14px;color:var(--ink);padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--card);width:100%;min-width:0}
-#cprof .soft{font-size:12px;margin:8px 0 0}
+#chat .h #cpf{font-size:15px;position:relative}
+#chat .h #cpf.empty::after{content:"";position:absolute;top:3px;right:3px;width:9px;height:9px;border-radius:50%;background:#FFD43B;border:1.5px solid #6D63F6}
+#pf-bd{position:fixed;inset:0;z-index:50;background:rgba(20,22,59,.55);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);animation:fade .2s}
+#pf{position:fixed;inset:0;margin:auto;z-index:51;width:min(440px,calc(100vw - 32px));height:fit-content;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:18px;box-shadow:0 24px 60px -16px rgba(20,22,59,.6);animation:fade .2s}
+#pf .pfh{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:17px;margin-bottom:4px}
+#pf .pfh button{width:32px;height:32px;border-radius:50%;border:0;background:none;color:var(--ink);font-size:22px;cursor:pointer}
+#pf .pfh button:hover{background:var(--line)}
+#pf .pg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+#pf label{min-width:0;display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--soft)}
+#pf select{font:inherit;font-size:15px;color:var(--ink);padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);width:100%;min-width:0}
+#pf .soft{font-size:13px;margin:12px 0 0}
+#pf .pfa{justify-content:flex-end;gap:8px;margin:14px 0 0}
+@media(max-width:340px){#pf .pg{grid-template-columns:1fr}}
 #cq{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .chip{font:inherit;font-size:14px;text-align:left;cursor:pointer;color:var(--blue);background:var(--card);border:1px solid var(--blue);border-radius:14px;padding:7px 12px}
 /* Trang con đường */
