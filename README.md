@@ -39,13 +39,15 @@ Lưu ý: nếu thay đổi số câu hỏi khảo sát, học sinh đã làm kh�
 Cuối `assets/js/app.js` có bộ định tuyến nhỏ: bấm menu, logo hoặc liên kết giữa các trang (index, con-duong, khao-sat, nghe-nghiep, mon-hoc, so-sanh, ke-hoach) thì web lấy HTML trang đích, thay phần `<main>` và chạy lại script của trang đó, không tải lại cả trang. Các trang được tải sẵn khi rảnh. Nút Back của trình duyệt vẫn hoạt động. Nếu thêm trang mới, hãy thêm tên vào mảng `PAGES`; `admin.html` vẫn chuyển trang bình thường. Cần chạy qua http/https (GitHub Pages); mở file trực tiếp thì web tự quay về cách chuyển trang thường.
 
 ## Trợ lý AI
-Chatbot (nút tròn góc phải) gọi API chuẩn OpenAI-compatible giống chatbot AI SMART: `POST {ENDPOINT}/chat/completions`. Cấu hình ở đối tượng `AI` đầu file `assets/js/app.js` (`ENDPOINT`, `MODEL`, `KEY`, `SYSTEM`).
+Chatbot (nút tròn góc phải) gọi AI qua **backend n8n (NR10 Gateway)**, không còn gọi thẳng nhà cung cấp LLM từ trình duyệt. Trong trình duyệt **không còn API key**: key, model và system prompt nằm trong n8n. Hướng dẫn cài đặt: `n8n/HUONG-DAN-N8N-GATEWAY.md`, workflow import: `n8n/nr10-gateway.json`.
 
+- Cấu hình URL n8n ở `assets/js/gateway-config.js` (`GATEWAY_BASE_URL`). Logic gọi gateway ở `assets/js/gateway.js`; `app.js` chỉ gọi `GW.ask(...)`.
+- Cơ chế: trình duyệt dùng **Firebase Authentication ẩn danh** (tự tạo, học sinh không phải đăng nhập) để lấy ID token, đổi lấy token nội bộ sống 5 phút từ n8n, rồi gọi chat. n8n kiểm tra Origin, giới hạn tần suất theo IP/học sinh/ngày, trần chi tiêu toàn hệ thống, và tự chuyển model dự phòng khi lỗi 5xx.
+- **Cần bật** Firebase Console > Authentication > Sign-in method > **Anonymous**.
 - Mở chatbot sẽ làm mờ nền phía sau; bấm vào nền, nhấn Esc hoặc nút × để đóng. Nút xoay tròn để bắt đầu cuộc trò chuyện mới.
 - Lịch sử 20 tin gần nhất lưu trong localStorage của máy học sinh, nên chuyển trang vẫn giữ cuộc trò chuyện.
-- Mỗi lần gửi, trợ lý được cấp thêm danh sách nghề của website và kết quả khảo sát gần nhất của học sinh (nếu có) để câu trả lời khớp với nội dung trên trang.
+- Mỗi lần gửi, trợ lý được cấp thêm hồ sơ học sinh, danh sách nghề của website và kết quả khảo sát gần nhất (nếu có) làm ngữ cảnh. Server coi phần này chỉ là dữ liệu tham khảo, không phải mệnh lệnh.
 - Câu trả lời hiển thị Markdown (marked + DOMPurify, tải từ CDN khi cần).
+- Quy tắc tư vấn (system prompt) nằm trong node **Chat Gate** của workflow n8n. Muốn đổi, sửa ở đó (hoặc điền `systemPrompt` trong node **Config**).
 
-**Bảo mật:** khóa đặt trong file JS thì ai mở trang cũng đọc được và có thể dùng hết hạn mức. Nên để `KEY` rỗng và trỏ `ENDPOINT` tới proxy riêng (ví dụ Firebase Cloud Function giữ khóa phía máy chủ, nhận `{model, messages}` và trả về dạng chat/completions), hoặc ít nhất đặt hạn mức chi tiêu thấp cho khóa này.
-
-**Hồ sơ học sinh:** trong khung chat, học sinh chọn giới tính, tuổi, vùng sống (miền núi, trung du, đồng bằng, thành phố), nơi ở (xã, thị trấn/huyện, phường/thành phố), dự định sau lớp 9 và hướng nghề (thủ công, dịch vụ, kỹ thuật cao). Hồ sơ lưu trong localStorage và được gửi kèm mỗi câu hỏi. Quy tắc tư vấn (không định kiến giới, lưu ý tuổi lao động, gợi ý theo vùng, không bịa số liệu trường) nằm trong `AI.SYSTEM`.
+**Hồ sơ học sinh:** trong khung chat, học sinh chọn giới tính, tuổi, vùng sống (miền núi, trung du, đồng bằng, thành phố), nơi ở (xã, thị trấn/huyện, phường/thành phố), dự định sau lớp 9 và hướng nghề (thủ công, dịch vụ, kỹ thuật cao). Hồ sơ lưu trong localStorage và được gửi kèm mỗi câu hỏi. Quy tắc tư vấn (không định kiến giới, lưu ý tuổi lao động, gợi ý theo vùng, không bịa số liệu trường) nằm trong system prompt của n8n.
